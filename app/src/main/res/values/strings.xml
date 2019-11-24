@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Loyalty Card Wallet</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+
+
+    <string name="search">Cauta</string>
+
+    <string name="add">Adauga</string>
+    <string name="add_scan">Aseaza cardul sub camera pentru a scana</string>
+    <string name="add_or">SAU</string>
+    <string name="add_manual">Introdu cardul manual</string>
+
+
+</resources>
