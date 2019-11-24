@@ -1,44 +1,45 @@
-package com.example.loyaltycardwallet.ui;
+package com.example.loyaltycardwallet.ui.add;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.util.Size;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.util.Size;
+import android.util.SparseArray;
 import android.view.Surface;
 import android.view.TextureView;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraX;
+import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.ImageAnalysisConfig;
+import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LifecycleOwner;
 
-import android.os.Bundle;
-
 import com.example.loyaltycardwallet.R;
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
+
+import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AddActivity extends AppCompatActivity implements LifecycleOwner {
-    // This is an arbitrary number we are using to keep track of the permission
-// request. Where an app has multiple context for requesting permission,
-// this can help differentiate the different contexts.
     private final int REQUEST_CODE_PERMISSIONS = 10;
 
-    // This is an array of all the permission specified in the manifest.
     private String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.CAMERA};
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -91,11 +92,50 @@ public class AddActivity extends AppCompatActivity implements LifecycleOwner {
             updateTransform();
         });
 
+        // add analyzer
+        BarcodeDetector detector =
+                new BarcodeDetector.Builder(getApplicationContext())
+                        .build();
+
+        if (!detector.isOperational()) {
+            // TODO
+//            txtView.setText("Could not set up the detector!");
+            return;
+        }
+
+
+        ImageAnalysisConfig config =
+                new ImageAnalysisConfig.Builder()
+                        .setTargetResolution(new Size(1280, 720))
+                        .setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
+                        .build();
+
+        ImageAnalysis imageAnalysis = new ImageAnalysis(config);
+
+        imageAnalysis.setAnalyzer(
+                AsyncTask.THREAD_POOL_EXECUTOR,
+                (image, rotationDegrees) -> {
+                    Bitmap bitmap = viewFinder.getBitmap();
+                    Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+
+                    SparseArray<Barcode> barcodes = detector.detect(frame);
+
+                    if (barcodes.size() > 0) {
+                        Barcode barcode = barcodes.valueAt(0);
+                        Log.println(Log.ERROR, "test", barcode.rawValue);
+
+                        Intent intent = new Intent(this, AddActivity.class);
+                        startActivity(intent);
+                    }
+
+                });
+
+
         // Bind use cases to lifecycle
         // If Android Studio complains about "this" being not a LifecycleOwner
         // try rebuilding the project or updating the appcompat dependency to
         // version 1.1.0 or higher.
-        CameraX.bindToLifecycle(this, preview);
+        CameraX.bindToLifecycle(this, imageAnalysis, preview);
     }
 
     public void updateTransform() {
@@ -109,16 +149,16 @@ public class AddActivity extends AppCompatActivity implements LifecycleOwner {
         int rotationDegrees = 0;
 
         switch (viewFinder.getDisplay().getRotation()) {
-            case (Surface.ROTATION_0):
+            case Surface.ROTATION_0:
                 rotationDegrees = 0;
                 break;
-            case (Surface.ROTATION_90):
+            case Surface.ROTATION_90:
                 rotationDegrees = 90;
                 break;
-            case (Surface.ROTATION_180):
+            case Surface.ROTATION_180:
                 rotationDegrees = 180;
                 break;
-            case (Surface.ROTATION_270):
+            case Surface.ROTATION_270:
                 rotationDegrees = 270;
                 break;
             default:

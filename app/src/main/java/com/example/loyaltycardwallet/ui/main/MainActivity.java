@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.loyaltycardwallet.R;
-import com.example.loyaltycardwallet.ui.AddActivity;
+import com.example.loyaltycardwallet.ui.add.AddActivity;
 import com.loopeer.cardstack.CardStackView;
 
 import java.util.Arrays;
