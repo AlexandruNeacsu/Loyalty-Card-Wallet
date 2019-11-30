@@ -1,6 +1,6 @@
-package com.example.loyaltycardwallet.data;
+package com.example.loyaltycardwallet.data.user;
 
-import com.example.loyaltycardwallet.data.model.LoggedInUser;
+import com.example.loyaltycardwallet.data.user.model.LoggedInUser;
 
 /**
  * Class that requests authentication and user information from the remote data source and

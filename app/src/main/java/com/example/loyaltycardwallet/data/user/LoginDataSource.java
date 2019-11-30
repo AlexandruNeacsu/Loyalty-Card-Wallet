@@ -1,6 +1,6 @@
-package com.example.loyaltycardwallet.data;
+package com.example.loyaltycardwallet.data.user;
 
-import com.example.loyaltycardwallet.data.model.LoggedInUser;
+import com.example.loyaltycardwallet.data.user.model.LoggedInUser;
 
 import java.io.IOException;
 

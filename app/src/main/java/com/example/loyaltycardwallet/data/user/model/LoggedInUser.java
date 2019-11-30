@@ -1,4 +1,4 @@
-package com.example.loyaltycardwallet.data.model;
+package com.example.loyaltycardwallet.data.user.model;
 
 /**
  * Data class that captures user information for logged in users retrieved from LoginRepository

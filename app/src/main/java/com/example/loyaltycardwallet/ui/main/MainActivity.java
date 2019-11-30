@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
             R.color.color_26
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,12 +64,7 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
 
 
         new Handler().postDelayed(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        stackAdapter.updateData(Arrays.asList(TEST_DATAS));
-                    }
-                },
+                () -> stackAdapter.updateData(Arrays.asList(TEST_DATAS)),
                 200
         );
 
@@ -79,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -87,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_add) {
             Intent intent = new Intent(this, AddActivity.class);
+//            startActivityForResult(intent, BARCODE_REQUEST);
             startActivity(intent);
 
             return true;
@@ -96,6 +93,16 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
         }
     }
 
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (requestCode == BARCODE_REQUEST) {
+//            if (resultCode == RESULT_OK && data != null) {
+//                Toast.makeText(this, data.getStringExtra("barcode"), Toast.LENGTH_LONG).show();
+//            }
+//        }
+//    }
 
     @Override
     public void onItemExpend(boolean expand) {

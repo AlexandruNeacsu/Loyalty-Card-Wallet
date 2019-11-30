@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel;
 
 import android.util.Patterns;
 
-import com.example.loyaltycardwallet.data.LoginRepository;
-import com.example.loyaltycardwallet.data.Result;
-import com.example.loyaltycardwallet.data.model.LoggedInUser;
+import com.example.loyaltycardwallet.data.user.LoginRepository;
+import com.example.loyaltycardwallet.data.user.Result;
+import com.example.loyaltycardwallet.data.user.model.LoggedInUser;
 import com.example.loyaltycardwallet.R;
 
 public class LoginViewModel extends ViewModel {

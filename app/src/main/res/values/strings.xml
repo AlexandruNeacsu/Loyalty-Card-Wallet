@@ -12,6 +12,7 @@
 
 
     <string name="search">Cauta</string>
+    <string name="search_hint">Numele magazinului</string>
 
     <string name="add">Adauga</string>
     <string name="add_scan">Aseaza cardul sub camera pentru a scana</string>

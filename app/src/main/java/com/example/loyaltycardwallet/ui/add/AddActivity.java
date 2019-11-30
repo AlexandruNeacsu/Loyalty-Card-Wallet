@@ -1,197 +1,196 @@
 package com.example.loyaltycardwallet.ui.add;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Size;
-import android.util.SparseArray;
-import android.view.Surface;
-import android.view.TextureView;
-import android.view.ViewGroup;
+import android.view.Menu;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.camera.core.CameraX;
-import androidx.camera.core.ImageAnalysis;
-import androidx.camera.core.ImageAnalysisConfig;
-import androidx.camera.core.ImageProxy;
-import androidx.camera.core.Preview;
-import androidx.camera.core.PreviewConfig;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LifecycleOwner;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.loyaltycardwallet.R;
-import com.google.android.gms.vision.Frame;
-import com.google.android.gms.vision.barcode.Barcode;
-import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.example.loyaltycardwallet.data.CardProvider.CardProviderDataSource;
+import com.example.loyaltycardwallet.ui.CardProviderList.CardProviderAdapter;
+import com.example.loyaltycardwallet.ui.CardProviderList.CardProviderFragment;
 
-import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.net.URL;
+import java.net.URLConnection;
 
-public class AddActivity extends AppCompatActivity implements LifecycleOwner {
-    private final int REQUEST_CODE_PERMISSIONS = 10;
+public class AddActivity extends AppCompatActivity implements CardProviderFragment.OnListFragmentInteractionListener {
+    private static int BARCODE_REQUEST = 0;
 
-    private String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.CAMERA};
-
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
-    private TextureView viewFinder;
+    private CardProviderAdapter fragmentAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
 
+        Toolbar myToolbar = findViewById(R.id.search_toolbar);
+        setSupportActionBar(myToolbar);
 
-        viewFinder = findViewById(R.id.viewFinder);
 
-        // Request camera permissions
-        int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-        if (rc == PackageManager.PERMISSION_GRANTED) {
-            viewFinder.post(this::startCamera);
-        } else {
-            ActivityCompat.requestPermissions(
-                    this,
-                    REQUIRED_PERMISSIONS,
-                    REQUEST_CODE_PERMISSIONS
+        CardProviderFragment fragment = (CardProviderFragment) getSupportFragmentManager().findFragmentById(R.id.providerList);
+
+        if (fragment != null) {
+            fragmentAdapter = fragment.mAdapter;
+
+            FragmentManager fm = getSupportFragmentManager();
+            fm.beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .hide(fragment)
+                    .commit();
+
+            new LogoProvider(this).execute(
+                    CardProviderDataSource.ITEMS.toArray(new CardProviderDataSource.CardProvider[0])
             );
         }
-
-
-        // Every time the provided texture view changes, recompute layout
-        viewFinder.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> updateTransform());
-    }
-
-
-    private void startCamera() {
-        PreviewConfig.Builder builder = new PreviewConfig.Builder();
-        builder.setTargetResolution(new Size(640, 480));
-
-        PreviewConfig previewConfig = builder.build();
-
-        // Build the viewfinder use case
-        Preview preview = new Preview(previewConfig);
-
-        // Every time the viewfinder is updated, recompute layout
-        preview.setOnPreviewOutputUpdateListener(output -> {
-            // To update the SurfaceTexture, we have to remove it and re-add it
-            ViewGroup parent = (ViewGroup) viewFinder.getParent();
-
-            parent.removeView(viewFinder);
-            parent.addView(viewFinder, 0);
-
-            viewFinder.setSurfaceTexture(output.getSurfaceTexture());
-            updateTransform();
-        });
-
-        // add analyzer
-        BarcodeDetector detector =
-                new BarcodeDetector.Builder(getApplicationContext())
-                        .build();
-
-        if (!detector.isOperational()) {
-            // TODO
-//            txtView.setText("Could not set up the detector!");
-            return;
-        }
-
-
-        ImageAnalysisConfig config =
-                new ImageAnalysisConfig.Builder()
-                        .setTargetResolution(new Size(1280, 720))
-                        .setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
-                        .build();
-
-        ImageAnalysis imageAnalysis = new ImageAnalysis(config);
-
-        imageAnalysis.setAnalyzer(
-                AsyncTask.THREAD_POOL_EXECUTOR,
-                (image, rotationDegrees) -> {
-                    Bitmap bitmap = viewFinder.getBitmap();
-                    Frame frame = new Frame.Builder().setBitmap(bitmap).build();
-
-                    SparseArray<Barcode> barcodes = detector.detect(frame);
-
-                    if (barcodes.size() > 0) {
-                        Barcode barcode = barcodes.valueAt(0);
-                        Log.println(Log.ERROR, "test", barcode.rawValue);
-
-                        Intent intent = new Intent(this, AddActivity.class);
-                        startActivity(intent);
-                    }
-
-                });
-
-
-        // Bind use cases to lifecycle
-        // If Android Studio complains about "this" being not a LifecycleOwner
-        // try rebuilding the project or updating the appcompat dependency to
-        // version 1.1.0 or higher.
-        CameraX.bindToLifecycle(this, imageAnalysis, preview);
-    }
-
-    public void updateTransform() {
-        Matrix matrix = new Matrix();
-
-        // Compute the center of the view finder
-        float centerX = viewFinder.getWidth() / 2f;
-        float centerY = viewFinder.getHeight() / 2f;
-
-        // Correct preview output to account for display rotation
-        int rotationDegrees = 0;
-
-        switch (viewFinder.getDisplay().getRotation()) {
-            case Surface.ROTATION_0:
-                rotationDegrees = 0;
-                break;
-            case Surface.ROTATION_90:
-                rotationDegrees = 90;
-                break;
-            case Surface.ROTATION_180:
-                rotationDegrees = 180;
-                break;
-            case Surface.ROTATION_270:
-                rotationDegrees = 270;
-                break;
-            default:
-                break;
-        }
-
-        matrix.postRotate((float) -rotationDegrees, centerX, centerY);
-
-        // Finally, apply transformations to our TextureView
-        viewFinder.setTransform(matrix);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                viewFinder.post(this::startCamera);
-            } else {
-                Toast.makeText(
-                        this,
-                        "Permissions not granted by the user.",
-                        Toast.LENGTH_SHORT
-                ).show();
-                finish();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+
+        SearchView searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (fragmentAdapter != null) {
+                    CardProviderDataSource.ITEMS.clear();
+
+                    if (newText.isEmpty()) {
+                        Log.println(Log.DEBUG, "DEBUG", "here");
+
+                        CardProviderDataSource.ITEMS.addAll(CardProviderDataSource.ORIGINAL_ITEMS);
+                    } else {
+
+                        for (CardProviderDataSource.CardProvider provider : CardProviderDataSource.ORIGINAL_ITEMS) {
+                            if (provider.name.toLowerCase().startsWith(newText.toLowerCase())) {
+                                CardProviderDataSource.ITEMS.add(provider);
+                            }
+                        }
+                    }
+
+                    fragmentAdapter.notifyDataSetChanged();
+
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        return true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        CardProviderDataSource.ITEMS.clear();
+
+        CardProviderDataSource.ITEMS.addAll(CardProviderDataSource.ORIGINAL_ITEMS);
+    }
+
+    @Override
+    public void onListFragmentInteraction(CardProviderDataSource.CardProvider item) {
+        Intent intent = new Intent(this, ScanActivity.class);
+        startActivityForResult(intent, BARCODE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == BARCODE_REQUEST) {
+            if (resultCode == RESULT_OK && data != null) {
+                Toast.makeText(this, data.getStringExtra("barcode"), Toast.LENGTH_LONG).show();
             }
         }
     }
 
+    private static class LogoProvider extends AsyncTask<CardProviderDataSource.CardProvider, Integer, String> {
+        private WeakReference<AddActivity> activityWeakReference;
 
-    /**
-     * Check if all permission specified in the manifest have been granted
-     */
-    private boolean allPermissionsGranted() {
-        return Arrays.stream(REQUIRED_PERMISSIONS).allMatch((String it) -> ContextCompat.checkSelfPermission(getBaseContext(), it) == PackageManager.PERMISSION_GRANTED);
+        LogoProvider(AddActivity activity) {
+            this.activityWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        protected String doInBackground(CardProviderDataSource.CardProvider... providers) {
+
+            for (int i = 0; i < providers.length; i++) {
+                CardProviderDataSource.CardProvider provider = providers[i];
+
+                if (provider.logo == null) {
+                    try {
+
+                        URLConnection urlConnection = new URL(provider.urlString).openConnection();
+
+                        provider.logo = BitmapFactory.decodeStream(urlConnection.getInputStream());
+
+                        publishProgress(i);
+
+                        // Escape early if cancel() is called
+                        if (isCancelled()) break;
+                    } catch (FileNotFoundException e) {
+                        provider.logo = null;
+
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+            return "Done";
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            AddActivity activity = activityWeakReference.get();
+            if (activity == null || activity.isFinishing()) return;
+
+            ProgressBar progressBar = activity.findViewById(R.id.progressBar_add);
+            progressBar.setProgress(values[values.length - 1]);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            AddActivity activity = activityWeakReference.get();
+
+
+            if (activity == null || activity.isFinishing()) return;
+            FragmentManager fm = activity.getSupportFragmentManager();
+
+            CardProviderFragment fragment = (CardProviderFragment) fm.findFragmentById(R.id.providerList);
+
+
+            if (fragment != null) {
+                fm.beginTransaction()
+                        .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                        .show(fragment)
+                        .commit();
+            }
+
+            ProgressBar progressBar = activity.findViewById(R.id.progressBar_add);
+            progressBar.setVisibility(View.GONE);
+        }
     }
 }

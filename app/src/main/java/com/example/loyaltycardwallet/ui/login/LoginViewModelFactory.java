@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.annotation.NonNull;
 
-import com.example.loyaltycardwallet.data.LoginDataSource;
-import com.example.loyaltycardwallet.data.LoginRepository;
+import com.example.loyaltycardwallet.data.user.LoginDataSource;
+import com.example.loyaltycardwallet.data.user.LoginRepository;
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.
