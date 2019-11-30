@@ -2,21 +2,21 @@ package com.example.loyaltycardwallet.ui.CardProviderList;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.example.loyaltycardwallet.R;
+import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
 import com.example.loyaltycardwallet.data.CardProvider.CardProviderDataSource;
-import com.example.loyaltycardwallet.data.CardProvider.CardProviderDataSource.CardProvider;
 
-/** TODO
+/**
+ * TODO
  * A fragment representing a list of Items.
  * <p/>
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
@@ -24,11 +24,9 @@ import com.example.loyaltycardwallet.data.CardProvider.CardProviderDataSource.Ca
  */
 public class CardProviderFragment extends Fragment {
 
-    private int mColumnCount = 1;
-
-    private OnListFragmentInteractionListener mListener;
-
     public CardProviderAdapter mAdapter;
+    private int mColumnCount = 1;
+    private OnListFragmentInteractionListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the

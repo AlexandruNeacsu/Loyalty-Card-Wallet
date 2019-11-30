@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Size;
 import android.util.SparseArray;
 import android.view.Surface;
@@ -26,6 +27,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.example.loyaltycardwallet.R;
+import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
@@ -118,8 +120,12 @@ public class ScanActivity extends AppCompatActivity implements LifecycleOwner {
                     if (barcodes.size() > 0) {
                         Barcode barcode = barcodes.valueAt(0);
 
+                        CardProvider provider = getIntent().getExtras().getParcelable("cardProvider");
+
+                        provider.barcode = barcode.rawValue;
+
                         Intent returnIntent = new Intent();
-                        returnIntent.putExtra("barcode", barcode.rawValue); // TODO
+                        returnIntent.putExtra("cardProviderInitialized", provider); // TODO
 
                         setResult(RESULT_OK, returnIntent);
                         finish();

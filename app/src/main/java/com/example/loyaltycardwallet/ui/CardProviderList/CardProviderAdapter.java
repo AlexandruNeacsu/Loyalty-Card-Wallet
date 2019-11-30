@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.loyaltycardwallet.R;
-import com.example.loyaltycardwallet.data.CardProvider.CardProviderDataSource.CardProvider;
+import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
 import com.example.loyaltycardwallet.ui.CardProviderList.CardProviderFragment.OnListFragmentInteractionListener;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public class CardProviderAdapter extends RecyclerView.Adapter<CardProviderAdapte
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mProviderLogoView.setImageBitmap(mValues.get(position).logo);
+        holder.mProviderLogoView.setImageBitmap(mValues.get(position).getLogo());
         holder.mProviderNameView.setText(mValues.get(position).name);
 
         holder.mView.setOnClickListener(v -> {

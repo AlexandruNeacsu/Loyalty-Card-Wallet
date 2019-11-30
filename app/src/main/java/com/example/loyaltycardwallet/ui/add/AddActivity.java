@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,12 +16,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.loyaltycardwallet.R;
+import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
 import com.example.loyaltycardwallet.data.CardProvider.CardProviderDataSource;
 import com.example.loyaltycardwallet.ui.CardProviderList.CardProviderAdapter;
 import com.example.loyaltycardwallet.ui.CardProviderList.CardProviderFragment;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
@@ -31,6 +29,8 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
     private static int BARCODE_REQUEST = 0;
 
     private CardProviderAdapter fragmentAdapter;
+
+    private CardProvider cardProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +53,7 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
                     .commit();
 
             new LogoProvider(this).execute(
-                    CardProviderDataSource.ITEMS.toArray(new CardProviderDataSource.CardProvider[0])
+                    CardProviderDataSource.ITEMS.toArray(new CardProvider[0])
             );
         }
     }
@@ -81,7 +81,7 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
                         CardProviderDataSource.ITEMS.addAll(CardProviderDataSource.ORIGINAL_ITEMS);
                     } else {
 
-                        for (CardProviderDataSource.CardProvider provider : CardProviderDataSource.ORIGINAL_ITEMS) {
+                        for (CardProvider provider : CardProviderDataSource.ORIGINAL_ITEMS) {
                             if (provider.name.toLowerCase().startsWith(newText.toLowerCase())) {
                                 CardProviderDataSource.ITEMS.add(provider);
                             }
@@ -109,8 +109,12 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
     }
 
     @Override
-    public void onListFragmentInteraction(CardProviderDataSource.CardProvider item) {
+    public void onListFragmentInteraction(CardProvider item) {
+        cardProvider = item;
+
         Intent intent = new Intent(this, ScanActivity.class);
+        intent.putExtra("cardProvider", item);
+
         startActivityForResult(intent, BARCODE_REQUEST);
     }
 
@@ -120,12 +124,19 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
 
         if (requestCode == BARCODE_REQUEST) {
             if (resultCode == RESULT_OK && data != null) {
-                Toast.makeText(this, data.getStringExtra("barcode"), Toast.LENGTH_LONG).show();
+                Intent returnIntent = new Intent();
+
+                CardProvider provider = data.getExtras().getParcelable("cardProviderInitialized");
+
+                returnIntent.putExtra("cardProviderInitialized", provider); // TODO
+
+                setResult(RESULT_OK, returnIntent);
+                finish();
             }
         }
     }
 
-    private static class LogoProvider extends AsyncTask<CardProviderDataSource.CardProvider, Integer, String> {
+    private static class LogoProvider extends AsyncTask<CardProvider, Integer, String> {
         private WeakReference<AddActivity> activityWeakReference;
 
         LogoProvider(AddActivity activity) {
@@ -133,27 +144,23 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
         }
 
         @Override
-        protected String doInBackground(CardProviderDataSource.CardProvider... providers) {
+        protected String doInBackground(CardProvider... providers) {
 
             for (int i = 0; i < providers.length; i++) {
-                CardProviderDataSource.CardProvider provider = providers[i];
+                CardProvider provider = providers[i];
 
-                if (provider.logo == null) {
+                if (provider.getLogo() == null) {
                     try {
 
                         URLConnection urlConnection = new URL(provider.urlString).openConnection();
 
-                        provider.logo = BitmapFactory.decodeStream(urlConnection.getInputStream());
+                        provider.setLogo(BitmapFactory.decodeStream(urlConnection.getInputStream()));
 
                         publishProgress(i);
 
                         // Escape early if cancel() is called
                         if (isCancelled()) break;
-                    } catch (FileNotFoundException e) {
-                        provider.logo = null;
-
-                        e.printStackTrace();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 

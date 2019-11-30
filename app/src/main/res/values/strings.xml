@@ -19,5 +19,7 @@
     <string name="add_or">SAU</string>
     <string name="add_manual">Introdu cardul manual</string>
 
+    <string name="main_card_content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sagittis enim at magna rutrum, a porta tortor interdum. In semper augue vel tempor volutpat. Praesent accumsan sagittis nisl. Etiam at urna in mi placerat vulputate at eget quam. Nulla purus neque, efficitur quis metus a, tempus lacinia mi. Vestibulum euismod viverra tortor, sed ornare lorem varius vestibulum. Vivamus et elementum urna, sit amet tristique nibh. Nam eros lectus, tincidunt non tincidunt tempor, mattis non velit. In ultricies leo urna, ac iaculis justo cursus sit amet. In in orci est. Aliquam erat volutpat. In nibh mi, hendrerit et consectetur in, interdum sit amet tortor. Suspendisse et justo ac est porttitor sagittis. Vivamus ultrices ligula metus, id efficitur purus porttitor quis. Ut ultricies ut magna a porttitor. </string>
+
 
 </resources>

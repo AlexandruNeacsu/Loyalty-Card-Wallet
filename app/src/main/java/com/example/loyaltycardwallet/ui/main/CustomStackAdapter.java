@@ -1,18 +1,24 @@
 package com.example.loyaltycardwallet.ui.main;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import androidx.core.content.res.ResourcesCompat;
+import android.widget.ImageView;
 
 import com.example.loyaltycardwallet.R;
+import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.loopeer.cardstack.CardStackView;
 import com.loopeer.cardstack.StackAdapter;
 
-public class CustomStackAdapter extends StackAdapter<Integer> {
+public class CustomStackAdapter extends StackAdapter<CardProvider> {
 
     CustomStackAdapter(Context context) {
         super(context);
@@ -20,15 +26,15 @@ public class CustomStackAdapter extends StackAdapter<Integer> {
 
 
     @Override
-    public void bindView(Integer data, int position, CardStackView.ViewHolder holder) {
-        ColorItemViewHolder h = (ColorItemViewHolder) holder;
-        h.onBind(data, position);
+    public void bindView(CardProvider provider, int position, CardStackView.ViewHolder holder) {
+        CardProviderViewHolder h = (CardProviderViewHolder) holder;
+        h.onBind(provider);
     }
 
     @Override
     protected CardStackView.ViewHolder onCreateView(ViewGroup parent, int viewType) {
         View view = getLayoutInflater().inflate(R.layout.list_card_item, parent, false);
-        return new ColorItemViewHolder(view);
+        return new CardProviderViewHolder(view);
     }
 
     @Override
@@ -36,26 +42,72 @@ public class CustomStackAdapter extends StackAdapter<Integer> {
         return R.layout.list_card_item;
     }
 
-    static class ColorItemViewHolder extends CardStackView.ViewHolder {
+    static class CardProviderViewHolder extends CardStackView.ViewHolder {
+        static private TypedArray colors;
+        static private int nextColorIndex = 0;
+
         View mLayout;
         View mContainerContent;
-        TextView mTextTitle;
+        ImageView mImageView;
 
-        ColorItemViewHolder(View view) {
+        CardProviderViewHolder(View view) {
             super(view);
             mLayout = view.findViewById(R.id.frame_list_card_item);
             mContainerContent = view.findViewById(R.id.container_list_content);
-            mTextTitle = view.findViewById(R.id.text_list_card_title);
+            mImageView = view.findViewById(R.id.image_list_card_logo);
+
+            if (colors == null) {
+                colors = getContext().getResources().obtainTypedArray(R.array.card_color_list);
+            }
         }
 
         @Override
         public void onItemExpand(boolean b) {
-            mContainerContent.setVisibility(b ? View.VISIBLE : View.GONE);
+//                mContainerContent.setVisibility(b ? View.VISIBLE : View.GONE);
+
+            CardProvider provider = (CardProvider) mImageView.getTag();
+
+            if (provider != null) {
+                if (b) {
+                    MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+
+                    try {
+                        BitMatrix bitMatrix = multiFormatWriter.encode(provider.barcode, BarcodeFormat.CODE_128, 140, 140);
+                        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                        Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+
+                        mImageView.setImageBitmap(bitmap);
+
+                        mContainerContent.setVisibility(View.VISIBLE);
+                    } catch (WriterException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    if (provider.getLogo() != null) {
+                        mImageView.setImageBitmap(provider.getLogo());
+                    }
+
+                    mContainerContent.setVisibility(View.GONE);
+                }
+            }
+
         }
 
-        void onBind(Integer data, int position) {
-            mLayout.getBackground().setColorFilter(ResourcesCompat.getColor(getContext().getResources(), data, null), PorterDuff.Mode.SRC_IN);
-            mTextTitle.setText(String.valueOf(position));
+        void onBind(CardProvider provider) {
+            mImageView.setImageBitmap(provider.getLogo());
+            mImageView.setTag(provider);
+
+
+            if (provider.colorIndex == -1) {
+                if (!colors.hasValue(nextColorIndex)) {
+                    nextColorIndex = 0;
+                }
+
+                provider.colorIndex = nextColorIndex;
+                nextColorIndex++;
+            }
+
+            mLayout.getBackground().setColorFilter(colors.getColor(provider.colorIndex, 0), PorterDuff.Mode.SRC_IN);
         }
 
     }

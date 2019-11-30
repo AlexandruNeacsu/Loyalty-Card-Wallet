@@ -1,53 +1,29 @@
 package com.example.loyaltycardwallet.ui.main;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.example.loyaltycardwallet.R;
-import com.example.loyaltycardwallet.ui.add.AddActivity;
-import com.loopeer.cardstack.CardStackView;
-
-import java.util.Arrays;
-
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.example.loyaltycardwallet.R;
+import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
+import com.example.loyaltycardwallet.ui.add.AddActivity;
+import com.loopeer.cardstack.CardStackView;
 import com.loopeer.cardstack.UpDownStackAnimatorAdapter;
 
-public class MainActivity extends AppCompatActivity implements CardStackView.ItemExpendListener {
-    public static Integer[] TEST_DATAS = new Integer[]{
-            R.color.color_1,
-            R.color.color_2,
-            R.color.color_3,
-            R.color.color_4,
-            R.color.color_5,
-            R.color.color_6,
-            R.color.color_7,
-            R.color.color_8,
-            R.color.color_9,
-            R.color.color_10,
-            R.color.color_11,
-            R.color.color_12,
-            R.color.color_13,
-            R.color.color_14,
-            R.color.color_15,
-            R.color.color_16,
-            R.color.color_17,
-            R.color.color_18,
-            R.color.color_19,
-            R.color.color_20,
-            R.color.color_21,
-            R.color.color_22,
-            R.color.color_23,
-            R.color.color_24,
-            R.color.color_25,
-            R.color.color_26
-    };
+import java.util.ArrayList;
+import java.util.List;
 
+public class MainActivity extends AppCompatActivity implements CardStackView.ItemExpendListener {
+    private static int ADD_PROVIDER = 0;
+    public List<CardProvider> TEST_DATA = new ArrayList<>();
+    private CustomStackAdapter stackAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +35,12 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
         stackView.setItemExpendListener(this);
         stackView.setAnimatorAdapter(new UpDownStackAnimatorAdapter(stackView));
 
-        final CustomStackAdapter stackAdapter = new CustomStackAdapter(this);
+        stackAdapter = new CustomStackAdapter(this);
         stackView.setAdapter(stackAdapter);
 
 
         new Handler().postDelayed(
-                () -> stackAdapter.updateData(Arrays.asList(TEST_DATAS)),
+                () -> stackAdapter.updateData(TEST_DATA),
                 200
         );
 
@@ -83,8 +59,8 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_add) {
             Intent intent = new Intent(this, AddActivity.class);
-//            startActivityForResult(intent, BARCODE_REQUEST);
-            startActivity(intent);
+            startActivityForResult(intent, ADD_PROVIDER);
+//            startActivity(intent);
 
             return true;
 
@@ -93,16 +69,25 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
         }
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == BARCODE_REQUEST) {
-//            if (resultCode == RESULT_OK && data != null) {
-//                Toast.makeText(this, data.getStringExtra("barcode"), Toast.LENGTH_LONG).show();
-//            }
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == ADD_PROVIDER) {
+            if (resultCode == RESULT_OK && data != null) {
+                CardProvider provider = data.getExtras().getParcelable("cardProviderInitialized");
+
+                Log.println(Log.DEBUG, "testAlex", Boolean.toString(provider.getLogo() == null) );
+
+                TEST_DATA.add(provider);
+
+                stackAdapter.updateData(TEST_DATA);
+
+//                CardStackView stackView = findViewById(R.id.stackview_main);
+
+            }
+        }
+    }
 
     @Override
     public void onItemExpend(boolean expand) {
