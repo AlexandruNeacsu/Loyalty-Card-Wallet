@@ -1,4 +1,4 @@
-package com.example.loyaltycardwallet.ui.login;
+package com.example.loyaltycardwallet.ui.auth.login;
 
 /**
  * Class exposing authenticated user details to the UI.

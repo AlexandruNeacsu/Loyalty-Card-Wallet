@@ -1,4 +1,4 @@
-package com.example.loyaltycardwallet.ui.login;
+package com.example.loyaltycardwallet.ui.auth.login;
 
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;

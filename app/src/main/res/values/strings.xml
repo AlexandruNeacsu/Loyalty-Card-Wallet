@@ -3,11 +3,10 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Parola</string>
-    <string name="action_sign_in">Sign in sau inregistreazate</string>
+    <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Buna !"</string>
     <string name="invalid_username">Username invalid</string>
-    <string name="invalid_password">Parola trebuie sa aiba >5 caractere</string>
     <string name="login_failed">"Login esuat!"</string>
 
 
@@ -18,7 +17,6 @@
     <string name="add_scan">Aseaza cardul sub camera pentru a scana</string>
     <string name="add_or">SAU</string>
     <string name="add_manual">Introdu cardul manual</string>
-    <string name="error_empty_barcode">Codul nu poate fii gol</string>
 
     <string name="store_name">Magazin: %1$s</string>
     <string name="store_address">Adresa cel mai apropiat: %1$s</string>
@@ -28,5 +26,15 @@
     <string name="isClosed">Nu</string>
     <string name="submit">Adauga</string>
     <string name="image_list_card_logo_contentDescription">Logo magazin</string>
+
+
+    <string name="action_register">Inregistreazate</string>
+    <string name="action_language">Limba</string>
+
+    <string name="error_empty_barcode">Codul nu poate fi gol</string>
+    <string name="error_empty_email">Emailul nu poate fi gol</string>
+    <string name="error_empty_password">Parola nu poate fi goala</string>
+    <string name="error_invalid_password">Parola trebuie sa aiba >5 caractere</string>
+
 
 </resources>
