@@ -2,13 +2,13 @@
     <string name="app_name">Loyalty Card Wallet</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="prompt_password">Parola</string>
+    <string name="action_sign_in">Sign in sau inregistreazate</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
+    <string name="welcome">"Buna !"</string>
+    <string name="invalid_username">Username invalid</string>
+    <string name="invalid_password">Parola trebuie sa aiba >5 caractere</string>
+    <string name="login_failed">"Login esuat!"</string>
 
 
     <string name="search">Cauta</string>
@@ -19,7 +19,12 @@
     <string name="add_or">SAU</string>
     <string name="add_manual">Introdu cardul manual</string>
 
-    <string name="main_card_content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sagittis enim at magna rutrum, a porta tortor interdum. In semper augue vel tempor volutpat. Praesent accumsan sagittis nisl. Etiam at urna in mi placerat vulputate at eget quam. Nulla purus neque, efficitur quis metus a, tempus lacinia mi. Vestibulum euismod viverra tortor, sed ornare lorem varius vestibulum. Vivamus et elementum urna, sit amet tristique nibh. Nam eros lectus, tincidunt non tincidunt tempor, mattis non velit. In ultricies leo urna, ac iaculis justo cursus sit amet. In in orci est. Aliquam erat volutpat. In nibh mi, hendrerit et consectetur in, interdum sit amet tortor. Suspendisse et justo ac est porttitor sagittis. Vivamus ultrices ligula metus, id efficitur purus porttitor quis. Ut ultricies ut magna a porttitor. </string>
 
+    <string name="store_name">Magazin: %1$s</string>
+    <string name="store_address">Adresa cel mai apropiat: %1$s</string>
+    <string name="store_isOpen">Deschis acum: %1$s</string>
+
+    <string name="isOpen">Da</string>
+    <string name="isClosed">Nu</string>
 
 </resources>

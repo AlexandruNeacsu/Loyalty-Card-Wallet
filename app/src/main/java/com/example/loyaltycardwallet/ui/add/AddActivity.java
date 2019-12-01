@@ -21,6 +21,12 @@ import com.example.loyaltycardwallet.data.CardProvider.CardProviderDataSource;
 import com.example.loyaltycardwallet.ui.CardProviderList.CardProviderAdapter;
 import com.example.loyaltycardwallet.ui.CardProviderList.CardProviderFragment;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
@@ -52,7 +58,7 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
                     .hide(fragment)
                     .commit();
 
-            new LogoProvider(this).execute(
+            new LocationAndLogoProvider(this).execute(
                     CardProviderDataSource.ITEMS.toArray(new CardProvider[0])
             );
         }
@@ -136,35 +142,74 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
         }
     }
 
-    private static class LogoProvider extends AsyncTask<CardProvider, Integer, String> {
+    private static class LocationAndLogoProvider extends AsyncTask<CardProvider, Integer, String> {
         private WeakReference<AddActivity> activityWeakReference;
+        private String placesUrl = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=AIzaSyCgMhZFEdwuzEJ030exD9vf9HPl5A0WqdE&" +
+                "language=ro&inputtype=textquery&fields=formatted_address,name,place_id,opening_hours&input="; // TODO remove API KEY
 
-        LogoProvider(AddActivity activity) {
+        LocationAndLogoProvider(AddActivity activity) {
             this.activityWeakReference = new WeakReference<>(activity);
         }
 
         @Override
         protected String doInBackground(CardProvider... providers) {
+            StringBuilder builder = new StringBuilder();
+
+            int progresPerProvider = 100 / providers.length;
 
             for (int i = 0; i < providers.length; i++) {
                 CardProvider provider = providers[i];
 
                 if (provider.getLogo() == null) {
                     try {
+                        // get the logo
+                        URLConnection logoUrlConnection = new URL(provider.logoUrlString).openConnection();
 
-                        URLConnection urlConnection = new URL(provider.urlString).openConnection();
-
-                        provider.setLogo(BitmapFactory.decodeStream(urlConnection.getInputStream()));
-
-                        publishProgress(i);
+                        provider.setLogo(BitmapFactory.decodeStream(logoUrlConnection.getInputStream()));
 
                         // Escape early if cancel() is called
-                        if (isCancelled()) break;
                     } catch (Exception e) {
+                        Log.println(Log.ERROR, "AddProviderError", "Failed to get logo for " + provider.name);
                         e.printStackTrace();
                     }
-
                 }
+
+                if (provider.getAddress() == null) {
+                    try {
+                        // get the closesest location data
+                        URLConnection locationUrlConnection = new URL(placesUrl + provider.name).openConnection();
+
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(locationUrlConnection.getInputStream()));
+
+                        for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
+                            builder.append(line);
+                        }
+
+                        String jsonString = builder.toString();
+
+
+                        builder.setLength(0);
+
+                        JSONObject object = new JSONObject(jsonString);
+
+                        JSONObject result = object.getJSONArray("candidates").getJSONObject(0);
+
+
+                        Log.println(Log.DEBUG, "Places result", result.toString());
+
+
+                        provider.setFormated_name(result.getString("name"));
+                        provider.setAddress(result.getString("formatted_address"));
+                        provider.setOpen(result.getJSONObject("opening_hours").getBoolean("open_now"));
+                    } catch (Exception e) {
+                        Log.println(Log.ERROR, "AddProviderError", "Failed to get data for " + provider.name);
+                        e.printStackTrace();
+                    }
+                }
+
+                publishProgress((i + 1) * progresPerProvider);
+
+                if (isCancelled()) break;
             }
             return "Done";
         }
@@ -175,7 +220,7 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
             if (activity == null || activity.isFinishing()) return;
 
             ProgressBar progressBar = activity.findViewById(R.id.progressBar_add);
-            progressBar.setProgress(values[values.length - 1]);
+            progressBar.setProgress(values[values.length - 1], true);
         }
 
         @Override

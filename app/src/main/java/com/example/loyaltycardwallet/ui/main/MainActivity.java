@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
         if (item.getItemId() == R.id.action_add) {
             Intent intent = new Intent(this, AddActivity.class);
             startActivityForResult(intent, ADD_PROVIDER);
-//            startActivity(intent);
 
             return true;
 
@@ -82,9 +81,6 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
                 TEST_DATA.add(provider);
 
                 stackAdapter.updateData(TEST_DATA);
-
-//                CardStackView stackView = findViewById(R.id.stackview_main);
-
             }
         }
     }
