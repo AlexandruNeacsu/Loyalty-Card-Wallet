@@ -22,7 +22,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements CardStackView.ItemExpendListener {
     private static int ADD_PROVIDER = 0;
-    public List<CardProvider> TEST_DATA = new ArrayList<>();
+    public static List<CardProvider> TEST_DATA = new ArrayList<>(); // TODO
     private CustomStackAdapter stackAdapter;
 
     @Override
