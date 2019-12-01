@@ -18,7 +18,7 @@
     <string name="add_scan">Aseaza cardul sub camera pentru a scana</string>
     <string name="add_or">SAU</string>
     <string name="add_manual">Introdu cardul manual</string>
-
+    <string name="error_empty_barcode">Codul nu poate fii gol</string>
 
     <string name="store_name">Magazin: %1$s</string>
     <string name="store_address">Adresa cel mai apropiat: %1$s</string>
@@ -26,5 +26,7 @@
 
     <string name="isOpen">Da</string>
     <string name="isClosed">Nu</string>
+    <string name="submit">Adauga</string>
+    <string name="image_list_card_logo_contentDescription">Logo magazin</string>
 
 </resources>

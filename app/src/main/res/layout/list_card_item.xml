@@ -9,16 +9,17 @@
 
     <FrameLayout
         android:id="@+id/frame_list_card_item"
-        android:layout_width="match_parent"
+        android:layout_width="400dp"
         android:layout_height="160dp"
+        android:layout_gravity="center"
         android:background="@drawable/shape_rectangle_with_radius">
-
 
         <ImageView
             android:id="@+id/image_list_card_logo"
             android:layout_width="140dp"
             android:layout_height="140dp"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:contentDescription="@string/image_list_card_logo_contentDescription"/>
     </FrameLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

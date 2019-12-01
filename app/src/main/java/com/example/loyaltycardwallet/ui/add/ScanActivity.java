@@ -7,12 +7,13 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Size;
 import android.util.SparseArray;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -62,9 +63,31 @@ public class ScanActivity extends AppCompatActivity implements LifecycleOwner {
             );
         }
 
-
         // Every time the provided texture view changes, recompute layout
         viewFinder.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> updateTransform());
+
+
+        Button button = findViewById(R.id.barcode_submit_button);
+        button.setOnClickListener(v -> {
+            CardProvider provider = getIntent().getExtras().getParcelable("cardProvider");
+            EditText editText = findViewById(R.id.barcode_manual_input);
+
+            String barcode = editText.getText().toString();
+
+            if (barcode.isEmpty()) {
+                editText.setError(getString(R.string.error_empty_barcode));
+            } else {
+                provider.barcode = barcode;
+
+
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("cardProviderInitialized", provider); // TODO
+
+                setResult(RESULT_OK, returnIntent);
+                finish();
+            }
+        });
+
     }
 
 
