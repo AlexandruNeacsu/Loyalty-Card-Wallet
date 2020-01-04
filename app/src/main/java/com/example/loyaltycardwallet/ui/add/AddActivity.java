@@ -1,15 +1,19 @@
 package com.example.loyaltycardwallet.ui.add;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -21,22 +25,25 @@ import com.example.loyaltycardwallet.data.CardProvider.CardProviderDataSource;
 import com.example.loyaltycardwallet.ui.CardProviderList.CardProviderAdapter;
 import com.example.loyaltycardwallet.ui.CardProviderList.CardProviderFragment;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AddActivity extends AppCompatActivity implements CardProviderFragment.OnListFragmentInteractionListener {
     private static int BARCODE_REQUEST = 0;
+    private static int NEW_PROVIDER_REQUEST = 1;
+
 
     private CardProviderAdapter fragmentAdapter;
 
-    private CardProvider cardProvider;
+    private CardProviderDataSource dataSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +65,10 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
                     .hide(fragment)
                     .commit();
 
+            dataSource = new CardProviderDataSource(getApplicationContext());
+
             new LocationAndLogoProvider(this).execute(
-                    CardProviderDataSource.ITEMS.toArray(new CardProvider[0])
+                    dataSource.getItems().toArray(new CardProvider[0])
             );
         }
     }
@@ -79,17 +88,14 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (fragmentAdapter != null) {
-                    CardProviderDataSource.ITEMS.clear();
+                    dataSource.getItems().clear();
 
                     if (newText.isEmpty()) {
-                        Log.println(Log.DEBUG, "DEBUG", "here");
-
-                        CardProviderDataSource.ITEMS.addAll(CardProviderDataSource.ORIGINAL_ITEMS);
+                        dataSource.getItems().addAll(dataSource.getOriginalItems());
                     } else {
-
-                        for (CardProvider provider : CardProviderDataSource.ORIGINAL_ITEMS) {
+                        for (CardProvider provider : dataSource.getOriginalItems()) {
                             if (provider.name.toLowerCase().startsWith(newText.toLowerCase())) {
-                                CardProviderDataSource.ITEMS.add(provider);
+                                dataSource.getItems().add(provider);
                             }
                         }
                     }
@@ -106,18 +112,24 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
     }
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.app_bar_add_provider) {
+            Intent intent = new Intent(this, AddProviderActivity.class);
+
+            startActivityForResult(intent, NEW_PROVIDER_REQUEST);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
 
-        CardProviderDataSource.ITEMS.clear();
-
-        CardProviderDataSource.ITEMS.addAll(CardProviderDataSource.ORIGINAL_ITEMS);
+        dataSource.resetItems();
     }
 
     @Override
     public void onListFragmentInteraction(CardProvider item) {
-        cardProvider = item;
-
         Intent intent = new Intent(this, ScanActivity.class);
         intent.putExtra("cardProvider", item);
 
@@ -128,16 +140,34 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == BARCODE_REQUEST) {
-            if (resultCode == RESULT_OK && data != null) {
+        if (resultCode == RESULT_OK && data != null) {
+            if (requestCode == BARCODE_REQUEST) {
                 Intent returnIntent = new Intent();
 
                 CardProvider provider = data.getExtras().getParcelable("cardProviderInitialized");
 
-                returnIntent.putExtra("cardProviderInitialized", provider); // TODO
+                returnIntent.putExtra("cardProviderInitialized", provider);
 
                 setResult(RESULT_OK, returnIntent);
                 finish();
+            } else if (requestCode == NEW_PROVIDER_REQUEST) {
+                String provider = data.getStringExtra("storeName");
+
+                dataSource.addItem(provider);
+
+                CardProviderFragment fragment = (CardProviderFragment) getSupportFragmentManager().findFragmentById(R.id.providerList);
+                // TODO move to method
+                if (fragment != null) {
+                    FragmentManager fm = getSupportFragmentManager();
+                    fm.beginTransaction()
+                            .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                            .hide(fragment)
+                            .commit();
+
+                    new LocationAndLogoProvider(this).execute(
+                            dataSource.getItems().toArray(new CardProvider[0])
+                    );
+                }
             }
         }
     }

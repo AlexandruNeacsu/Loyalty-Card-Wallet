@@ -10,7 +10,6 @@
     <string name="login_failed">"Login esuat!"</string>
 
 
-    <string name="search">Cauta</string>
     <string name="search_hint">Numele magazinului</string>
 
     <string name="add">Adauga</string>
@@ -35,6 +34,14 @@
     <string name="error_empty_email">Emailul nu poate fi gol</string>
     <string name="error_empty_password">Parola nu poate fi goala</string>
     <string name="error_invalid_password">Parola trebuie sa aiba >5 caractere</string>
+
+    <!-- ADD MENU -->
+    <string name="add_menu_search">Cauta</string>
+    <string name="add_menu_add_provider">Adauga magazin</string>
+
+<!--  ADD PROVIDER -->
+    <string name="add_provider_hint">Nume magazin</string>
+
 
 
 </resources>

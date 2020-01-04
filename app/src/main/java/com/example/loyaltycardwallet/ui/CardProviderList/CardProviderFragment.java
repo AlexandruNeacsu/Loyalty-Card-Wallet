@@ -56,7 +56,9 @@ public class CardProviderFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            mAdapter = new CardProviderAdapter(CardProviderDataSource.ITEMS, mListener);
+            CardProviderDataSource dataSource = new CardProviderDataSource(getContext());
+
+            mAdapter = new CardProviderAdapter(dataSource.getItems(), mListener);
             recyclerView.setAdapter(mAdapter);
         }
         return view;

@@ -5,7 +5,13 @@
     <item
         android:id="@+id/app_bar_search"
         android:icon="@drawable/ic_search_white_24dp"
-        android:title="@string/search"
+        android:title="@string/add_menu_search"
         app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/app_bar_add_provider"
+        android:icon="@drawable/ic_add_circle_black_24dp"
+        android:title="@string/add_menu_add_provider"
+        android:visible="true"
         app:showAsAction="ifRoom" />
 </menu>
