@@ -49,5 +49,14 @@
 
     <string name="delete_card_provider">Sterge</string>
 
+    <string name="distance_report_title">Lista celor mai apropiate magazine la care deti card.</string>
+
+
+    <string name="report_distance">Distanta</string>
+    <string name="report_xxx">XXX</string>
+
+    <string name="save">Salveaza</string>
+    <string name="report_save_succes">Raport salvat cu succes</string>
 
 </resources>
+

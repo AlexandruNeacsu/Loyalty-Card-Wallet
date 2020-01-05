@@ -33,6 +33,9 @@ public class Card {
 
     public String placeId;
 
+    public double lat;
+    public double lng;
+
     public Card() {
     }
 

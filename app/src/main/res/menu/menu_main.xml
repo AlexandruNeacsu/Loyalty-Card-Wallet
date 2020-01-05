@@ -11,6 +11,29 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/reports_list"
+        android:icon="@drawable/ic_more_vert_black_24dp"
+        android:orderInCategory="300"
+        android:title="@string/card_options"
+        app:showAsAction="always">
+
+        <menu>
+
+            <item android:id="@+id/reports_list_distance"
+                app:showAsAction="ifRoom"
+                android:title="@string/report_distance" />
+
+            <item
+                android:id="@+id/reports_list_xxx"
+                android:title="@string/report_xxx"
+                app:showAsAction="ifRoom" />
+
+        </menu>
+
+
+    </item>
+
+    <item
         android:id="@+id/card_edit"
         android:icon="@drawable/ic_more_vert_black_24dp"
         android:orderInCategory="300"

@@ -22,6 +22,7 @@ import com.example.loyaltycardwallet.data.Card.CardDataSource;
 import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
 import com.example.loyaltycardwallet.data.Database.Database;
 import com.example.loyaltycardwallet.ui.DbInterfaces.CardDbActivity;
+import com.example.loyaltycardwallet.ui.Reports.DistanceReportActivity;
 import com.example.loyaltycardwallet.ui.add.AddActivityCardProvider;
 import com.example.loyaltycardwallet.ui.add.ScanActivity;
 import com.loopeer.cardstack.CardStackView;
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
         new CardDataSource.getAll<>(this, getApplicationContext()).execute();
 
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbarMain);
+        Toolbar myToolbar = findViewById(R.id.toolbarMain);
         setSupportActionBar(myToolbar);
 
 
@@ -132,6 +133,11 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
                 new CardDataSource.delete<>(this, getApplicationContext(), selectedCard).execute();
 
                 return true;
+            }
+            case R.id.reports_list_distance: {
+                Intent intent = new Intent(this, DistanceReportActivity.class);
+
+                startActivity(intent);
             }
             default: {
                 return super.onOptionsItemSelected(item);
@@ -180,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
     @Override
     public void onItemExpend(boolean expand) {
         menu.findItem(R.id.action_add).setVisible(!expand);
+        menu.findItem(R.id.reports_list).setVisible(!expand);
         menu.findItem(R.id.card_edit).setVisible(expand);
     }
 
@@ -193,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
     private static class LocationAndLogoUpdater extends AsyncTask<Card, Void, String> {
         private WeakReference<MainActivity> activityWeakReference;
         private String placesUrl = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=KEY-PLACEHOLDER&" +
-                "language=ro&inputtype=textquery&fields=formatted_address,name,place_id,opening_hours&input="; // TODO remove API KEY
+                "language=ro&inputtype=textquery&fields=formatted_address,geometry,name,place_id,opening_hours&input="; // TODO remove API KEY
 
         LocationAndLogoUpdater(MainActivity activity) {
             this.activityWeakReference = new WeakReference<>(activity);
@@ -261,6 +268,10 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
                         card.address = result.getString("formatted_address");
                         card.isOpen = result.getJSONObject("opening_hours").getBoolean("open_now");
 
+                        JSONObject location = result.getJSONObject("geometry").getJSONObject("location");
+                        card.lat = location.getDouble("lat");
+                        card.lng = location.getDouble("lng");
+
                         dao.update(card);
                     } catch (Exception e) {
                         Log.println(Log.ERROR, "AddProviderError", "Failed to get data for " + card.name);
@@ -283,5 +294,10 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
 
             activity.stackAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void getClosestItemsResponse(List<Card> list) {
+
     }
 }
