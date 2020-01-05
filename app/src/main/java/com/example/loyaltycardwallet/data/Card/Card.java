@@ -10,6 +10,9 @@ import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
 
 @Entity(tableName = "Cards")
 public class Card {
+    private static final String logoProviderURL = "https://logo.clearbit.com/";
+
+
     @PrimaryKey(autoGenerate = true)
     public int id;
 
@@ -20,6 +23,8 @@ public class Card {
     public Bitmap barcodeBitmap;
     public int colorIndex = -1;
     public Bitmap logo;
+    public String logoUrlString;
+
 
     // location details
     public String formated_name;
@@ -28,7 +33,8 @@ public class Card {
 
     public String placeId;
 
-    public Card() {}
+    public Card() {
+    }
 
     public Card(CardProvider provider) {
         this.name = provider.name;
@@ -40,5 +46,7 @@ public class Card {
         this.isOpen = provider.isOpen;
         this.address = provider.address;
         this.placeId = provider.placeId;
+        this.logoUrlString = logoProviderURL.concat(name).concat(".ro");
+
     }
 }

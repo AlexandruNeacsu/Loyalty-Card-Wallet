@@ -1,8 +1,11 @@
 package com.example.loyaltycardwallet.ui.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -14,14 +17,23 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.loyaltycardwallet.R;
 import com.example.loyaltycardwallet.data.Card.Card;
+import com.example.loyaltycardwallet.data.Card.CardDao;
 import com.example.loyaltycardwallet.data.Card.CardDataSource;
 import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
+import com.example.loyaltycardwallet.data.Database.Database;
 import com.example.loyaltycardwallet.ui.DbInterfaces.CardDbActivity;
 import com.example.loyaltycardwallet.ui.add.AddActivityCardProvider;
 import com.example.loyaltycardwallet.ui.add.ScanActivity;
 import com.loopeer.cardstack.CardStackView;
 import com.loopeer.cardstack.UpDownStackAnimatorAdapter;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements CardStackView.ItemExpendListener, CardDbActivity {
@@ -36,6 +48,9 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
     @Override
     public void getItemsResponse(List<Card> cards) {
         stackAdapter.updateData(cards);
+
+        // update the cards data(location, etc...)
+        new LocationAndLogoUpdater(this).execute(cards.toArray(new Card[0]));
     }
 
     @Override
@@ -173,5 +188,100 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
         super.onPostResume();
 
         new CardDataSource.getAll<>(this, getApplicationContext()).execute();
+    }
+
+    private static class LocationAndLogoUpdater extends AsyncTask<Card, Void, String> {
+        private WeakReference<MainActivity> activityWeakReference;
+        private String placesUrl = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=KEY-PLACEHOLDER&" +
+                "language=ro&inputtype=textquery&fields=formatted_address,name,place_id,opening_hours&input="; // TODO remove API KEY
+
+        LocationAndLogoUpdater(MainActivity activity) {
+            this.activityWeakReference = new WeakReference<>(activity);
+
+            SharedPreferences sharedPreferences = activity.getSharedPreferences("loyaltyCarda-keys", Context.MODE_PRIVATE);
+
+            String key = sharedPreferences.getString("places", null);
+
+            placesUrl = placesUrl.replace("KEY-PLACEHOLDER", key);
+        }
+
+        @Override
+        protected String doInBackground(Card... cards) {
+            StringBuilder builder = new StringBuilder();
+
+
+            Activity activity = activityWeakReference.get();
+            CardDao dao = Database.getInstance(activity.getApplicationContext())
+                    .getCardDao();
+
+            for (int i = 0; i < cards.length; i++) {
+                Card card = cards[i];
+
+                if (card.logo == null) {
+                    try {
+                        // get the logo
+                        URLConnection logoUrlConnection = new URL(card.logoUrlString).openConnection();
+
+                        card.logo = BitmapFactory.decodeStream(logoUrlConnection.getInputStream());
+
+                        dao.update(card);
+
+                        // Escape early if cancel() is called
+                    } catch (Exception e) {
+                        Log.println(Log.ERROR, "AddProviderError", "Failed to get logo for " + card.name);
+                        e.printStackTrace();
+                    }
+                }
+
+                if (card.address == null) {
+                    try {
+                        // get the closesest location data
+                        URLConnection locationUrlConnection = new URL(placesUrl + card.name).openConnection();
+
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(locationUrlConnection.getInputStream()));
+
+                        for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
+                            builder.append(line);
+                        }
+
+                        String jsonString = builder.toString();
+
+
+                        builder.setLength(0);
+
+                        JSONObject object = new JSONObject(jsonString);
+
+                        JSONObject result = object.getJSONArray("candidates").getJSONObject(0);
+
+
+                        Log.println(Log.DEBUG, "Places result", result.toString());
+
+
+                        card.formated_name = result.getString("name");
+                        card.address = result.getString("formatted_address");
+                        card.isOpen = result.getJSONObject("opening_hours").getBoolean("open_now");
+
+                        dao.update(card);
+                    } catch (Exception e) {
+                        Log.println(Log.ERROR, "AddProviderError", "Failed to get data for " + card.name);
+                        e.printStackTrace();
+                    }
+                }
+
+
+                if (isCancelled()) break;
+            }
+            return "Done";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            MainActivity activity = activityWeakReference.get();
+
+
+            if (activity == null || activity.isFinishing()) return;
+
+            activity.stackAdapter.notifyDataSetChanged();
+        }
     }
 }
