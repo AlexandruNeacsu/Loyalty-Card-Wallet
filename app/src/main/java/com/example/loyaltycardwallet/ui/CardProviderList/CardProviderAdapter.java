@@ -42,7 +42,7 @@ public class CardProviderAdapter extends RecyclerView.Adapter<CardProviderAdapte
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mProviderLogoView.setImageBitmap(mValues.get(position).getLogo());
+        holder.mProviderLogoView.setImageBitmap(mValues.get(position).logo);
         holder.mProviderNameView.setText(mValues.get(position).name);
 
         holder.mView.setOnClickListener(v -> {

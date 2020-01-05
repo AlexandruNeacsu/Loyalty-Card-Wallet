@@ -1,5 +1,6 @@
 package com.example.loyaltycardwallet.ui.add;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,9 +22,12 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.loyaltycardwallet.R;
 import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
+import com.example.loyaltycardwallet.data.CardProvider.CardProviderDao;
 import com.example.loyaltycardwallet.data.CardProvider.CardProviderDataSource;
+import com.example.loyaltycardwallet.data.Database;
 import com.example.loyaltycardwallet.ui.CardProviderList.CardProviderAdapter;
 import com.example.loyaltycardwallet.ui.CardProviderList.CardProviderFragment;
+import com.example.loyaltycardwallet.ui.DbInterfaces.CardProviderDbActivity;
 
 import org.json.JSONObject;
 
@@ -32,18 +36,27 @@ import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-public class AddActivity extends AppCompatActivity implements CardProviderFragment.OnListFragmentInteractionListener {
+public class AddActivityCardProvider extends AppCompatActivity implements CardProviderFragment.OnListFragmentInteractionListener, CardProviderDbActivity {
     private static int BARCODE_REQUEST = 0;
     private static int NEW_PROVIDER_REQUEST = 1;
 
 
     private CardProviderAdapter fragmentAdapter;
 
-    private CardProviderDataSource dataSource;
+    @Override
+    public void getItemsResponse(List<CardProvider> providers) {
+        // called when CardProviderDataSource.getAll is executed
+        new LocationAndLogoProvider(this).execute(
+                providers.toArray(new CardProvider[0])
+        );
+    }
+
+    @Override
+    public void insertItemResponse(Boolean response) {
+        new CardProviderDataSource.getAll<>(this, getApplicationContext()).execute();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +78,7 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
                     .hide(fragment)
                     .commit();
 
-            dataSource = new CardProviderDataSource(getApplicationContext());
-
-            new LocationAndLogoProvider(this).execute(
-                    dataSource.getItems().toArray(new CardProvider[0])
-            );
+            new CardProviderDataSource.getAll<>(this, getApplicationContext()).execute();
         }
     }
 
@@ -88,14 +97,14 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (fragmentAdapter != null) {
-                    dataSource.getItems().clear();
+                    CardProviderDataSource.getItems().clear();
 
                     if (newText.isEmpty()) {
-                        dataSource.getItems().addAll(dataSource.getOriginalItems());
+                        CardProviderDataSource.getItems().addAll(CardProviderDataSource.getOriginalItems());
                     } else {
-                        for (CardProvider provider : dataSource.getOriginalItems()) {
+                        for (CardProvider provider : CardProviderDataSource.getOriginalItems()) {
                             if (provider.name.toLowerCase().startsWith(newText.toLowerCase())) {
-                                dataSource.getItems().add(provider);
+                                CardProviderDataSource.getItems().add(provider);
                             }
                         }
                     }
@@ -125,7 +134,7 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
     protected void onStop() {
         super.onStop();
 
-        dataSource.resetItems();
+        CardProviderDataSource.resetItems();
     }
 
     @Override
@@ -153,9 +162,8 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
             } else if (requestCode == NEW_PROVIDER_REQUEST) {
                 String provider = data.getStringExtra("storeName");
 
-                dataSource.addItem(provider);
-
                 CardProviderFragment fragment = (CardProviderFragment) getSupportFragmentManager().findFragmentById(R.id.providerList);
+
                 // TODO move to method
                 if (fragment != null) {
                     FragmentManager fm = getSupportFragmentManager();
@@ -163,39 +171,51 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
                             .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                             .hide(fragment)
                             .commit();
-
-                    new LocationAndLogoProvider(this).execute(
-                            dataSource.getItems().toArray(new CardProvider[0])
-                    );
                 }
+
+                new CardProviderDataSource.insert<>(this, getApplicationContext(), new CardProvider(null, provider)).execute();
+
             }
         }
     }
 
     private static class LocationAndLogoProvider extends AsyncTask<CardProvider, Integer, String> {
-        private WeakReference<AddActivity> activityWeakReference;
-        private String placesUrl = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=AIzaSyCgMhZFEdwuzEJ030exD9vf9HPl5A0WqdE&" +
+        private WeakReference<AddActivityCardProvider> activityWeakReference;
+        private String placesUrl = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=KEY-PLACEHOLDER&" +
                 "language=ro&inputtype=textquery&fields=formatted_address,name,place_id,opening_hours&input="; // TODO remove API KEY
 
-        LocationAndLogoProvider(AddActivity activity) {
+        LocationAndLogoProvider(AddActivityCardProvider activity) {
             this.activityWeakReference = new WeakReference<>(activity);
+
+            SharedPreferences sharedPreferences = activity.getSharedPreferences("loyaltyCarda-keys", Context.MODE_PRIVATE);
+
+            String key = sharedPreferences.getString("places", null);
+
+            placesUrl = placesUrl.replace("KEY-PLACEHOLDER", key);
+
         }
 
         @Override
         protected String doInBackground(CardProvider... providers) {
             StringBuilder builder = new StringBuilder();
 
-            int progresPerProvider = 100 / providers.length;
+            int progresPerProvider = 100 / (providers.length > 0 ? providers.length : 100);
+
+            Activity activity = activityWeakReference.get();
+            CardProviderDao dao = Database.getInstance(activity.getApplicationContext())
+                    .getCardProviderDao();
 
             for (int i = 0; i < providers.length; i++) {
                 CardProvider provider = providers[i];
 
-                if (provider.getLogo() == null) {
+                if (provider.logo == null) {
                     try {
                         // get the logo
                         URLConnection logoUrlConnection = new URL(provider.logoUrlString).openConnection();
 
-                        provider.setLogo(BitmapFactory.decodeStream(logoUrlConnection.getInputStream()));
+                        provider.logo = BitmapFactory.decodeStream(logoUrlConnection.getInputStream());
+
+                        dao.update(provider);
 
                         // Escape early if cancel() is called
                     } catch (Exception e) {
@@ -204,7 +224,7 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
                     }
                 }
 
-                if (provider.getAddress() == null) {
+                if (provider.address == null) {
                     try {
                         // get the closesest location data
                         URLConnection locationUrlConnection = new URL(placesUrl + provider.name).openConnection();
@@ -228,14 +248,17 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
                         Log.println(Log.DEBUG, "Places result", result.toString());
 
 
-                        provider.setFormated_name(result.getString("name"));
-                        provider.setAddress(result.getString("formatted_address"));
-                        provider.setOpen(result.getJSONObject("opening_hours").getBoolean("open_now"));
+                        provider.formated_name = result.getString("name");
+                        provider.address = result.getString("formatted_address");
+                        provider.isOpen = result.getJSONObject("opening_hours").getBoolean("open_now");
+
+                        dao.update(provider);
                     } catch (Exception e) {
                         Log.println(Log.ERROR, "AddProviderError", "Failed to get data for " + provider.name);
                         e.printStackTrace();
                     }
                 }
+
 
                 publishProgress((i + 1) * progresPerProvider);
 
@@ -246,7 +269,7 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
 
         @Override
         protected void onProgressUpdate(Integer... values) {
-            AddActivity activity = activityWeakReference.get();
+            AddActivityCardProvider activity = activityWeakReference.get();
             if (activity == null || activity.isFinishing()) return;
 
             ProgressBar progressBar = activity.findViewById(R.id.progressBar_add);
@@ -255,7 +278,7 @@ public class AddActivity extends AppCompatActivity implements CardProviderFragme
 
         @Override
         protected void onPostExecute(String s) {
-            AddActivity activity = activityWeakReference.get();
+            AddActivityCardProvider activity = activityWeakReference.get();
 
 
             if (activity == null || activity.isFinishing()) return;

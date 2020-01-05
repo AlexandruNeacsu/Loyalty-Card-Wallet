@@ -1,9 +1,10 @@
 package com.example.loyaltycardwallet.ui.main;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -12,18 +13,34 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.loyaltycardwallet.R;
+import com.example.loyaltycardwallet.data.Card.Card;
+import com.example.loyaltycardwallet.data.Card.CardDataSource;
 import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
-import com.example.loyaltycardwallet.ui.add.AddActivity;
+import com.example.loyaltycardwallet.ui.DbInterfaces.CardDbActivity;
+import com.example.loyaltycardwallet.ui.add.AddActivityCardProvider;
 import com.loopeer.cardstack.CardStackView;
 import com.loopeer.cardstack.UpDownStackAnimatorAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements CardStackView.ItemExpendListener {
+public class MainActivity extends AppCompatActivity implements CardStackView.ItemExpendListener, CardDbActivity {
     private static int ADD_PROVIDER = 0;
-    public static List<CardProvider> TEST_DATA = new ArrayList<>(); // TODO
-    private CustomStackAdapter stackAdapter;
+    public CustomStackAdapter stackAdapter;
+
+    public Menu menu;
+
+    @Override
+    public void getItemsResponse(List<Card> cards) {
+        new Handler().postDelayed(
+                () -> stackAdapter.updateData(cards),
+                200
+        );
+    }
+
+    @Override
+    public void insertItemResponse(Boolean response) {
+        new CardDataSource.getAll<>(this, getApplicationContext()).execute();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,27 +55,37 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
         stackAdapter = new CustomStackAdapter(this);
         stackView.setAdapter(stackAdapter);
 
+        new CardDataSource.getAll<>(this, getApplicationContext()).execute();
 
-        new Handler().postDelayed(
-                () -> stackAdapter.updateData(TEST_DATA),
-                200
-        );
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(myToolbar);
 
+
+        // set the API keys
+        SharedPreferences sharedPreferences = getSharedPreferences("loyaltyCarda-keys", Context.MODE_PRIVATE);
+
+        if (sharedPreferences.getString("places", null) == null) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("places", "AIzaSyCgMhZFEdwuzEJ030exD9vf9HPl5A0WqdE");
+
+            editor.apply();
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        this.menu = menu;
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_add) {
-            Intent intent = new Intent(this, AddActivity.class);
+            Intent intent = new Intent(this, AddActivityCardProvider.class);
             startActivityForResult(intent, ADD_PROVIDER);
 
             return true;
@@ -76,11 +103,9 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
             if (resultCode == RESULT_OK && data != null) {
                 CardProvider provider = data.getExtras().getParcelable("cardProviderInitialized");
 
-                Log.println(Log.DEBUG, "testAlex", Boolean.toString(provider.getLogo() == null) );
+                Card card = new Card(provider);
 
-                TEST_DATA.add(provider);
-
-                stackAdapter.updateData(TEST_DATA);
+                new CardDataSource.insert<>(this, getApplicationContext(), card).execute();
             }
         }
     }

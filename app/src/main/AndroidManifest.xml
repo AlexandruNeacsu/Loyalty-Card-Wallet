@@ -11,9 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.add.AddProviderActivity"></activity>
+        <activity android:name=".ui.DbInterfaces.CardProviderDbActivity"></activity>
+        <activity android:name=".ui.add.AddProviderActivity" />
         <activity android:name=".ui.auth.register.RegisterActivity" />
-        <activity android:name=".ui.add.AddActivity" />
+        <activity android:name=".ui.add.AddActivityCardProvider" />
         <activity android:name=".ui.add.ScanActivity" />
         <activity android:name=".ui.main.MainActivity" />
         <activity

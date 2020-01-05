@@ -39,9 +39,13 @@
     <string name="add_menu_search">Cauta</string>
     <string name="add_menu_add_provider">Adauga magazin</string>
 
-<!--  ADD PROVIDER -->
+    <!--  ADD PROVIDER -->
     <string name="add_provider_hint">Nume magazin</string>
 
+    <!--  Card menu  -->
+    <string name="card_edit">Editeaza</string>
+    <string name="card_delete">Sterge</string>
+    <string name="card_options">Setari card</string>
 
 
 </resources>

@@ -4,6 +4,11 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "providers")
 public class CardProvider implements Parcelable {
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public CardProvider createFromParcel(Parcel in) {
@@ -15,24 +20,36 @@ public class CardProvider implements Parcelable {
         }
     };
 
-    // TODO make all fields private!
+    @PrimaryKey(autoGenerate = true)
+    public int id;
 
     // logo related
     private static final String logoProviderURL = "https://logo.clearbit.com/";
-    public final String name;
-    public final String logoUrlString;
+    public String name;
+    public String logoUrlString;
+    public Bitmap logo;
+
+    @Ignore
     public String barcode;
+
+    @Ignore
     public Bitmap barcodeBitmap;
+
+    @Ignore
     public int colorIndex = -1;
-    private Bitmap logo;
 
     // location details
-    private String formated_name;
-    private Boolean isOpen;
-    private String address;
+    @Ignore
+    public String formated_name;
 
-    // other
-    private String placeId;
+    @Ignore
+    public Boolean isOpen;
+
+    @Ignore
+    public String address;
+
+    @Ignore
+    public String placeId;
 
 
 
@@ -80,47 +97,5 @@ public class CardProvider implements Parcelable {
     @Override
     public String toString() {
         return name;
-    }
-
-    public Bitmap getLogo() {
-        return logo;
-    }
-
-    public void setLogo(Bitmap logo) {
-        if (logo != null) {
-            this.logo = logo;
-        }
-    }
-
-    public String getFormated_name() {
-        return formated_name;
-    }
-
-    public void setFormated_name(String formated_name) {
-        this.formated_name = formated_name;
-    }
-
-    public Boolean getOpen() {
-        return isOpen;
-    }
-
-    public void setOpen(Boolean open) {
-        isOpen = open;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPlaceId() {
-        return placeId;
-    }
-
-    public void setPlaceId(String placeId) {
-        this.placeId = placeId;
     }
 }

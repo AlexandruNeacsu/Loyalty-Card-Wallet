@@ -4,13 +4,16 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.loyaltycardwallet.R;
-import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
+import com.example.loyaltycardwallet.data.Card.Card;
+import com.example.loyaltycardwallet.data.Card.CardDataSource;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -19,7 +22,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.loopeer.cardstack.CardStackView;
 import com.loopeer.cardstack.StackAdapter;
 
-public class CustomStackAdapter extends StackAdapter<CardProvider> {
+public class CustomStackAdapter extends StackAdapter<Card> {
 
     CustomStackAdapter(Context context) {
         super(context);
@@ -27,15 +30,15 @@ public class CustomStackAdapter extends StackAdapter<CardProvider> {
 
 
     @Override
-    public void bindView(CardProvider provider, int position, CardStackView.ViewHolder holder) {
-        CardProviderViewHolder h = (CardProviderViewHolder) holder;
-        h.onBind(provider);
+    public void bindView(Card card, int position, CardStackView.ViewHolder holder) {
+        CardViewHolder h = (CardViewHolder) holder;
+        h.onBind(card);
     }
 
     @Override
     protected CardStackView.ViewHolder onCreateView(ViewGroup parent, int viewType) {
         View view = getLayoutInflater().inflate(R.layout.list_card_item, parent, false);
-        return new CardProviderViewHolder(view);
+        return new CardViewHolder(view);
     }
 
     @Override
@@ -43,7 +46,7 @@ public class CustomStackAdapter extends StackAdapter<CardProvider> {
         return R.layout.list_card_item;
     }
 
-    static class CardProviderViewHolder extends CardStackView.ViewHolder {
+    static class CardViewHolder extends CardStackView.ViewHolder {
         static private TypedArray colors;
         static private int nextColorIndex = 0;
 
@@ -54,9 +57,14 @@ public class CustomStackAdapter extends StackAdapter<CardProvider> {
         TextView mAddressView;
         TextView mIsOpenView;
 
-        CardProvider provider;
+        MenuItem add;
+        MenuItem options;
 
-        CardProviderViewHolder(View view) {
+        MainActivity activity;
+
+        Card card;
+
+        CardViewHolder(View view) {
             super(view);
             mLayout = view.findViewById(R.id.frame_list_card_item);
             mContainerContent = view.findViewById(R.id.container_list_content);
@@ -65,6 +73,12 @@ public class CustomStackAdapter extends StackAdapter<CardProvider> {
             mNameView = view.findViewById(R.id.card_textview_name);
             mAddressView = view.findViewById(R.id.card_textview_address);
             mIsOpenView = view.findViewById(R.id.card_textview_isOpen);
+
+            activity = (MainActivity) view.getContext();
+
+            add = activity.menu.findItem(R.id.action_add);
+            options = activity.menu.findItem(R.id.card_edit);
+
 
             mContainerContent.setVisibility(View.GONE);
 
@@ -75,19 +89,29 @@ public class CustomStackAdapter extends StackAdapter<CardProvider> {
 
         @Override
         public void onItemExpand(boolean b) {
-//                mContainerContent.setVisibility(b ? View.VISIBLE : View.GONE);
+            if (card != null) {
+                Menu menu = options.getSubMenu();
 
-            if (provider != null) {
+
+                menu.findItem(R.id.card_action_delete).setOnMenuItemClickListener(item -> {
+                    new CardDataSource.delete(getContext(), card).execute();
+
+                    // refresh list
+                    activity.insertItemResponse(null);
+                    return true;
+                });
+
+
                 if (b) {
-                    if (provider.barcodeBitmap == null) {
+                    if (card.barcodeBitmap == null) {
                         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
 
                         try {
-                            BitMatrix bitMatrix = multiFormatWriter.encode(provider.barcode, BarcodeFormat.CODE_128, 140, 140);
+                            BitMatrix bitMatrix = multiFormatWriter.encode(card.barcode, BarcodeFormat.CODE_128, 140, 140);
                             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
                             Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
 
-                            provider.barcodeBitmap = bitmap;
+                            card.barcodeBitmap = bitmap;
 
                             mImageView.setImageBitmap(bitmap);
 
@@ -96,47 +120,53 @@ public class CustomStackAdapter extends StackAdapter<CardProvider> {
                         }
 
                     } else {
-                        mImageView.setImageBitmap(provider.barcodeBitmap);
+                        mImageView.setImageBitmap(card.barcodeBitmap);
                     }
 
                     mContainerContent.setVisibility(View.VISIBLE);
 
+                    add.setVisible(false);
+                    options.setVisible(true);
+
                 } else {
-                    if (provider.getLogo() != null) {
-                        mImageView.setImageBitmap(provider.getLogo());
+                    if (card.logo != null) {
+                        mImageView.setImageBitmap(card.logo);
                     }
 
                     mContainerContent.setVisibility(View.GONE);
+
+                    add.setVisible(true);
+                    options.setVisible(false);
                 }
             }
 
         }
 
-        void onBind(CardProvider provider) {
-            this.provider = provider;
+        void onBind(Card card) {
+            this.card = card;
 
-            mImageView.setImageBitmap(provider.getLogo());
+            mImageView.setImageBitmap(card.logo);
 
             Context context = getContext();
 
-            mNameView.setText(context.getString(R.string.store_name, provider.getFormated_name()));
-            mAddressView.setText(context.getString(R.string.store_address, provider.getAddress()));
+            mNameView.setText(context.getString(R.string.store_name, card.formated_name));
+            mAddressView.setText(context.getString(R.string.store_address, card.address));
             mIsOpenView.setText(context.getString(
-                    R.string.store_isOpen, provider.getOpen() ?
+                    R.string.store_isOpen, card.isOpen ?
                             context.getString(R.string.isOpen) : context.getString(R.string.isClosed)
             ));
 
 
-            if (provider.colorIndex == -1) {
+            if (card.colorIndex == -1) {
                 if (!colors.hasValue(nextColorIndex)) {
                     nextColorIndex = 0;
                 }
 
-                provider.colorIndex = nextColorIndex;
+                card.colorIndex = nextColorIndex;
                 nextColorIndex++;
             }
 
-            mLayout.getBackground().setColorFilter(colors.getColor(provider.colorIndex, 0), PorterDuff.Mode.SRC_IN);
+            mLayout.getBackground().setColorFilter(colors.getColor(card.colorIndex, 0), PorterDuff.Mode.SRC_IN);
         }
 
     }

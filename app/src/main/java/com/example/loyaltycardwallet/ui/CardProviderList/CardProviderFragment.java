@@ -14,6 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.loyaltycardwallet.R;
 import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
 import com.example.loyaltycardwallet.data.CardProvider.CardProviderDataSource;
+import com.example.loyaltycardwallet.ui.DbInterfaces.CardProviderDbActivity;
+
+import java.util.List;
 
 /**
  * TODO
@@ -22,11 +25,13 @@ import com.example.loyaltycardwallet.data.CardProvider.CardProviderDataSource;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class CardProviderFragment extends Fragment {
+public class CardProviderFragment extends Fragment implements CardProviderDbActivity {
 
     public CardProviderAdapter mAdapter;
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+
+    RecyclerView recyclerView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -42,6 +47,17 @@ public class CardProviderFragment extends Fragment {
     }
 
     @Override
+    public void getItemsResponse(List<CardProvider> providers) {
+        mAdapter = new CardProviderAdapter(providers, mListener);
+        recyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void insertItemResponse(Boolean response) {
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cardprovider_list, container, false);
@@ -49,17 +65,16 @@ public class CardProviderFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            CardProviderDataSource dataSource = new CardProviderDataSource(getContext());
+            new CardProviderDataSource.getAll<>(this, context).execute();
 
-            mAdapter = new CardProviderAdapter(dataSource.getItems(), mListener);
-            recyclerView.setAdapter(mAdapter);
+
         }
         return view;
     }

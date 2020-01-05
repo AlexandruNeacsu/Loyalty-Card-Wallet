@@ -10,4 +10,30 @@
         android:title="@string/add"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/card_edit"
+        android:icon="@drawable/ic_more_vert_black_24dp"
+        android:orderInCategory="300"
+        android:title="@string/card_options"
+        app:showAsAction="always"
+        android:visible="false">
+
+        <menu>
+
+            <item android:id="@+id/card_action_edit"
+                android:icon="@android:drawable/ic_menu_preferences"
+                app:showAsAction="ifRoom"
+                android:title="@string/card_edit" />
+
+            <item
+                android:id="@+id/card_action_delete"
+                android:icon="@android:drawable/ic_menu_delete"
+                android:title="@string/card_delete"
+                app:showAsAction="ifRoom" />
+
+        </menu>
+
+
+    </item>
+
 </menu>
