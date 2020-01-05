@@ -3,6 +3,7 @@ package com.example.loyaltycardwallet.ui.CardProviderList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.loyaltycardwallet.R;
 import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
+import com.example.loyaltycardwallet.data.CardProvider.CardProviderDataSource;
 import com.example.loyaltycardwallet.ui.CardProviderList.CardProviderFragment.OnListFragmentInteractionListener;
 
 import java.util.List;
@@ -24,6 +26,7 @@ public class CardProviderAdapter extends RecyclerView.Adapter<CardProviderAdapte
 
     private final List<CardProvider> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private final CardProviderAdapter self = this;
 
     public CardProviderAdapter(List<CardProvider> items, OnListFragmentInteractionListener listener) {
         mValues = items;
@@ -70,6 +73,15 @@ public class CardProviderAdapter extends RecyclerView.Adapter<CardProviderAdapte
             mView = view;
             mProviderLogoView = view.findViewById(R.id.providerLogo);
             mProviderNameView = view.findViewById(R.id.providerName);
+
+            Button button = view.findViewById(R.id.delete_provider_button);
+            button.setOnClickListener(v -> {
+                new CardProviderDataSource.delete(view.getContext(), mItem).execute();
+
+                mValues.remove(mItem);
+
+                self.notifyDataSetChanged();
+            });
         }
 
         @NonNull

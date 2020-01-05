@@ -31,6 +31,7 @@ public class CardProvider implements Parcelable {
     public String logoUrlString;
     public Bitmap logo;
 
+    // fields to store card data on creation
     @Ignore
     public String barcode;
 

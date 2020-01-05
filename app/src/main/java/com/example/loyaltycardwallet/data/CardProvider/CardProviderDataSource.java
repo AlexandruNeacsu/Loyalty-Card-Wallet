@@ -119,4 +119,38 @@ public class CardProviderDataSource {
             activity.insertItemResponse(res);
         }
     }
+
+    public static class delete extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<Context> contextWeakReference;
+        private CardProvider provider;
+
+
+        public delete(Context context, CardProvider provider) {
+            this.contextWeakReference = new WeakReference<>(context);
+
+            this.provider = provider;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            Context context = contextWeakReference.get();
+
+            if (this.provider != null) {
+                Database.getInstance(context)
+                        .getCardProviderDao()
+                        .delete(provider);
+
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean res) {
+            if (res) {
+                items.remove(this.provider);
+                originalItems.remove(provider);
+            }
+        }
+    }
 }

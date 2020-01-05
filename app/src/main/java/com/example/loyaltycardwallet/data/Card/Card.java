@@ -13,6 +13,8 @@ public class Card {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
+    public int cardProviderId;
+
     public String name;
     public String barcode;
     public Bitmap barcodeBitmap;

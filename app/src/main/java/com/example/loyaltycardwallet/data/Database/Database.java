@@ -11,7 +11,7 @@ import com.example.loyaltycardwallet.data.Card.CardDao;
 import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
 import com.example.loyaltycardwallet.data.CardProvider.CardProviderDao;
 
-@androidx.room.Database(entities = {CardProvider.class, Card.class}, version = 4)
+@androidx.room.Database(entities = {CardProvider.class, Card.class}, version = 5)
 @TypeConverters({Converters.class})
 public abstract class Database extends RoomDatabase {
     private static Database instance;

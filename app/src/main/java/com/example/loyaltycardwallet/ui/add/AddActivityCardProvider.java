@@ -292,6 +292,8 @@ public class AddActivityCardProvider extends AppCompatActivity implements CardPr
                         .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                         .show(fragment)
                         .commit();
+
+                fragment.mAdapter.notifyDataSetChanged();
             }
 
             ProgressBar progressBar = activity.findViewById(R.id.progressBar_add);

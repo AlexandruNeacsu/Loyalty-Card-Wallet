@@ -47,5 +47,7 @@
     <string name="card_delete">Sterge</string>
     <string name="card_options">Setari card</string>
 
+    <string name="delete_card_provider">Sterge</string>
+
 
 </resources>
