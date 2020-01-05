@@ -8,6 +8,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.example.loyaltycardwallet.data.Card.Card;
+
 @Entity(tableName = "providers")
 public class CardProvider implements Parcelable {
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
@@ -52,6 +54,18 @@ public class CardProvider implements Parcelable {
     public String placeId;
 
 
+    public CardProvider(Card card) {
+        this.name = card.name;
+        this.barcode = card.barcode;
+        this.barcodeBitmap = card.barcodeBitmap;
+        this.colorIndex = card.colorIndex;
+        this.logo = card.logo;
+        this.formated_name = card.formated_name;
+        this.isOpen = card.isOpen;
+        this.address = card.address;
+        this.placeId = card.placeId;
+        this.logoUrlString = logoProviderURL.concat(name).concat(".ro");
+    }
 
     private CardProvider(Parcel in) {
         name = in.readString();

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Size;
 import android.util.SparseArray;
 import android.view.Surface;
@@ -49,6 +50,15 @@ public class ScanActivity extends AppCompatActivity implements LifecycleOwner {
         setContentView(R.layout.activity_scan);
 
 
+        CardProvider provider = getIntent().getExtras().getParcelable("cardProvider");
+        EditText editText = findViewById(R.id.barcode_manual_input);
+
+        Log.println(Log.DEBUG, "ScanDEBUG", provider.barcode == null ? "null" : provider.barcode);
+
+        if (provider.barcode != null) {
+            editText.setText(provider.barcode);
+        }
+
         viewFinder = findViewById(R.id.viewFinder);
 
         // Request camera permissions
@@ -69,9 +79,6 @@ public class ScanActivity extends AppCompatActivity implements LifecycleOwner {
 
         Button button = findViewById(R.id.barcode_submit_button);
         button.setOnClickListener(v -> {
-            CardProvider provider = getIntent().getExtras().getParcelable("cardProvider");
-            EditText editText = findViewById(R.id.barcode_manual_input);
-
             String barcode = editText.getText().toString();
 
             if (barcode.isEmpty()) {

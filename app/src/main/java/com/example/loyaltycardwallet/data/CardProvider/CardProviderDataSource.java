@@ -3,7 +3,7 @@ package com.example.loyaltycardwallet.data.CardProvider;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.example.loyaltycardwallet.data.Database;
+import com.example.loyaltycardwallet.data.Database.Database;
 import com.example.loyaltycardwallet.ui.DbInterfaces.CardProviderDbActivity;
 
 import java.lang.ref.WeakReference;

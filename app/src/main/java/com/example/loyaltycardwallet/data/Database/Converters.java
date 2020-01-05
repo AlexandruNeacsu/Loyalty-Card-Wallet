@@ -1,4 +1,4 @@
-package com.example.loyaltycardwallet.data;
+package com.example.loyaltycardwallet.data.Database;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

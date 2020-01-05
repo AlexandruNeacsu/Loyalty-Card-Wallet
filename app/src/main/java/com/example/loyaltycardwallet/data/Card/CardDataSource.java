@@ -2,11 +2,10 @@ package com.example.loyaltycardwallet.data.Card;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
-import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
-import com.example.loyaltycardwallet.data.Database;
+import com.example.loyaltycardwallet.data.Database.Database;
 import com.example.loyaltycardwallet.ui.DbInterfaces.CardDbActivity;
-import com.example.loyaltycardwallet.ui.DbInterfaces.CardProviderDbActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -73,19 +72,57 @@ public class CardDataSource {
         }
     }
 
-    public static class delete extends AsyncTask<Card, Void, Void> {
+    public static class update<T extends CardDbActivity> extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<T> activityWeakReference;
         private WeakReference<Context> contextWeakReference;
         private Card card;
 
 
-        public delete(Context context, Card card) {
+        public update(T activity, Context context, Card card) {
+            this.activityWeakReference = new WeakReference<>(activity);
             this.contextWeakReference = new WeakReference<>(context);
 
             this.card = card;
         }
 
         @Override
-        protected Void doInBackground(Card... cardsx) {
+        protected Boolean doInBackground(Void... voids) {
+            Context context = contextWeakReference.get();
+
+            if (this.card != null) {
+                Database.getInstance(context)
+                        .getCardDao()
+                        .update(card);
+
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean res) {
+            T activity = activityWeakReference.get();
+
+            activity.updateItemResponse(res);
+        }
+    }
+
+
+    public static class delete<T extends CardDbActivity> extends AsyncTask<Card, Void, Boolean> {
+        private WeakReference<T> activityWeakReference;
+        private WeakReference<Context> contextWeakReference;
+        private Card card;
+
+
+        public delete(T activity, Context context, Card card) {
+            this.activityWeakReference = new WeakReference<>(activity);
+            this.contextWeakReference = new WeakReference<>(context);
+
+            this.card = card;
+        }
+
+        @Override
+        protected Boolean doInBackground(Card... cardsx) {
             Context context = contextWeakReference.get();
 
             if (this.card != null) {
@@ -93,9 +130,16 @@ public class CardDataSource {
                         .getCardDao()
                         .delete(card);
 
-                return null;
+                return true;
             }
-            return null;
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean res) {
+            T activity = activityWeakReference.get();
+
+            activity.deleteItemResponse(res);
         }
     }
 }

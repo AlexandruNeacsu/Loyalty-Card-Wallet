@@ -24,6 +24,8 @@ public class Card {
     public Boolean isOpen;
     public String address;
 
+    public String placeId;
+
     public Card() {}
 
     public Card(CardProvider provider) {
@@ -35,5 +37,6 @@ public class Card {
         this.formated_name = provider.formated_name;
         this.isOpen = provider.isOpen;
         this.address = provider.address;
+        this.placeId = provider.placeId;
     }
 }

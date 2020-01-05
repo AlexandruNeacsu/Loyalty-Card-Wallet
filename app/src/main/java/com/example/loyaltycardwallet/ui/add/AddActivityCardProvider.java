@@ -24,7 +24,7 @@ import com.example.loyaltycardwallet.R;
 import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
 import com.example.loyaltycardwallet.data.CardProvider.CardProviderDao;
 import com.example.loyaltycardwallet.data.CardProvider.CardProviderDataSource;
-import com.example.loyaltycardwallet.data.Database;
+import com.example.loyaltycardwallet.data.Database.Database;
 import com.example.loyaltycardwallet.ui.CardProviderList.CardProviderAdapter;
 import com.example.loyaltycardwallet.ui.CardProviderList.CardProviderFragment;
 import com.example.loyaltycardwallet.ui.DbInterfaces.CardProviderDbActivity;
