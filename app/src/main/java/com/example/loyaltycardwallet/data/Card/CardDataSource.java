@@ -20,6 +20,7 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CardDataSource {
@@ -116,22 +117,6 @@ public class CardDataSource {
                     }
                 });
 
-
-//                store.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        Integer currentValue = dataSnapshot.getValue(Integer.class);
-//
-//                        if (currentValue == null || currentValue == 0) store.setValue(1);
-//                        else store.setValue(currentValue + 1);
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//                        Log.e("FirebaseError", databaseError.getMessage());
-//                    }
-//                });
-
                 return true;
             }
             return false;
@@ -227,24 +212,6 @@ public class CardDataSource {
                     }
                 });
 
-
-//                store.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        Integer currentValue = dataSnapshot.getValue(Integer.class);
-//
-//                        if (currentValue != null || currentValue > 0) {
-//                            // sanity check
-//                            store.setValue(currentValue - 1);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
-
                 return true;
             }
             return false;
@@ -285,8 +252,16 @@ public class CardDataSource {
                 return (int) (card1Distance - card2Distance);
             });
 
-            int[] ids = list.stream().limit(5).mapToInt(card -> card.id).toArray();
+            List<Card> filteredList = new ArrayList<>();
 
+            // remove duplicate stores
+            for (Card card : list) {
+                if (filteredList.stream().noneMatch(card1 -> card1.name.equals(card.name))) {
+                    filteredList.add(card);
+                }
+            }
+
+            int[] ids = filteredList.stream().limit(10).mapToInt(card -> card.id).toArray();
 
             return dao.find5(ids);
         }

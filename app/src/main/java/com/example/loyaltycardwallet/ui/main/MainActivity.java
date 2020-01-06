@@ -149,11 +149,15 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
                 Intent intent = new Intent(this, DistanceReportActivity.class);
 
                 startActivity(intent);
+
+                return true;
             }
             case R.id.reports_list_number: {
                 Intent intent = new Intent(this, NumbersReportActivity.class);
 
                 startActivity(intent);
+
+                return true;
             }
             default: {
                 return super.onOptionsItemSelected(item);

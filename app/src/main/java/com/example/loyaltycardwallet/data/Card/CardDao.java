@@ -25,7 +25,7 @@ public interface CardDao {
     @Update
     void update(Card card);
 
-    @Query("SELECT id, lat, lng, cardProviderId, colorIndex  FROM cards")
+    @Query("SELECT id, name, lat, lng, cardProviderId, colorIndex FROM cards")
     List<Card> getDistances();
 
     @Query("SELECT * FROM cards WHERE id IN (:ids) LIMIT 5")
