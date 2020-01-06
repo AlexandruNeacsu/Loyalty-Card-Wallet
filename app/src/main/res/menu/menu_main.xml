@@ -5,14 +5,14 @@
 
     <item
         android:id="@+id/action_add"
-        android:icon="@drawable/ic_add_circle_black_24dp"
+        android:icon="@drawable/ic_add_circle_white_24dp"
         android:orderInCategory="300"
         android:title="@string/add"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/reports_list"
-        android:icon="@drawable/ic_more_vert_black_24dp"
+        android:icon="@drawable/ic_more_vert_white_24dp"
         android:orderInCategory="300"
         android:title="@string/card_options"
         app:showAsAction="always">
@@ -35,7 +35,7 @@
 
     <item
         android:id="@+id/card_edit"
-        android:icon="@drawable/ic_more_vert_black_24dp"
+        android:icon="@drawable/ic_more_vert_white_24dp"
         android:orderInCategory="300"
         android:title="@string/card_options"
         app:showAsAction="always"

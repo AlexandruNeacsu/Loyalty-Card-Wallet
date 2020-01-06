@@ -31,6 +31,7 @@
         android:id="@+id/delete_provider_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_delete_white_24dp"
         android:text="@string/delete_card_provider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -17,12 +17,10 @@
         <activity android:name=".ui.Reports.DistanceReportActivity" />
         <activity android:name=".ui.DbInterfaces.CardProviderDbActivity" />
         <activity android:name=".ui.add.AddProviderActivity" />
-        <activity android:name=".ui.auth.register.RegisterActivity" />
         <activity android:name=".ui.add.AddActivityCardProvider" />
         <activity android:name=".ui.add.ScanActivity" />
-        <activity android:name=".ui.main.MainActivity" />
         <activity
-            android:name=".ui.auth.login.LoginActivity"
+            android:name=".ui.main.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

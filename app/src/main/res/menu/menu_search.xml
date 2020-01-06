@@ -10,7 +10,7 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/app_bar_add_provider"
-        android:icon="@drawable/ic_add_circle_black_24dp"
+        android:icon="@drawable/ic_add_circle_white_24dp"
         android:title="@string/add_menu_add_provider"
         android:visible="true"
         app:showAsAction="ifRoom" />

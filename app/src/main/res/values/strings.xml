@@ -1,14 +1,6 @@
 <resources>
     <string name="app_name">Loyalty Card Wallet</string>
-    <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Parola</string>
-    <string name="action_sign_in">Sign in</string>
-    <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Buna !"</string>
-    <string name="invalid_username">Username invalid</string>
-    <string name="login_failed">"Login esuat!"</string>
-
 
     <string name="search_hint">Numele magazinului</string>
 
