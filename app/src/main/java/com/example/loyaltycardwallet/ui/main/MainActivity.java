@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
 import com.example.loyaltycardwallet.data.Database.Database;
 import com.example.loyaltycardwallet.ui.DbInterfaces.CardDbActivity;
 import com.example.loyaltycardwallet.ui.Reports.DistanceReportActivity;
+import com.example.loyaltycardwallet.ui.Reports.NumbersReportActivity;
 import com.example.loyaltycardwallet.ui.add.AddActivityCardProvider;
 import com.example.loyaltycardwallet.ui.add.ScanActivity;
 import com.loopeer.cardstack.CardStackView;
@@ -48,10 +50,15 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
 
     @Override
     public void getItemsResponse(List<Card> cards) {
-        stackAdapter.updateData(cards);
+        new Handler().postDelayed(() -> {
+            stackAdapter.updateData(cards);
 
-        // update the cards data(location, etc...)
-        new LocationAndLogoUpdater(this).execute(cards.toArray(new Card[0]));
+            // update the cards data(location, etc...)
+            new LocationAndLogoUpdater(this).execute(cards.toArray(new Card[0]));
+        },
+        200
+        );
+
     }
 
     @Override
@@ -68,6 +75,10 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
 
     @Override
     public void deleteItemResponse(Boolean response) {
+        menu.findItem(R.id.action_add).setVisible(true);
+        menu.findItem(R.id.reports_list).setVisible(true);
+        menu.findItem(R.id.card_edit).setVisible(false);
+
         new CardDataSource.getAll<>(this, getApplicationContext()).execute();
     }
 
@@ -136,6 +147,11 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
             }
             case R.id.reports_list_distance: {
                 Intent intent = new Intent(this, DistanceReportActivity.class);
+
+                startActivity(intent);
+            }
+            case R.id.reports_list_number: {
+                Intent intent = new Intent(this, NumbersReportActivity.class);
 
                 startActivity(intent);
             }
@@ -294,6 +310,7 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
 
             activity.stackAdapter.notifyDataSetChanged();
         }
+
     }
 
     @Override

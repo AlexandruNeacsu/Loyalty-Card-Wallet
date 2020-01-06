@@ -21,6 +21,9 @@ public class AddProviderActivity extends AppCompatActivity {
             EditText text = findViewById(R.id.add_provider_store_name);
             String storeName = text.getText().toString();
 
+            // initial letter upper case
+            storeName = storeName.substring(0, 1).toUpperCase() + storeName.substring(1).toLowerCase();
+
             Intent returnIntent = new Intent();
             returnIntent.putExtra("storeName", storeName);
 

@@ -21,11 +21,11 @@
 
             <item android:id="@+id/reports_list_distance"
                 app:showAsAction="ifRoom"
-                android:title="@string/report_distance" />
+                android:title="@string/menu_report_distance" />
 
             <item
-                android:id="@+id/reports_list_xxx"
-                android:title="@string/report_xxx"
+                android:id="@+id/reports_list_number"
+                android:title="@string/menu_report_numbers"
                 app:showAsAction="ifRoom" />
 
         </menu>

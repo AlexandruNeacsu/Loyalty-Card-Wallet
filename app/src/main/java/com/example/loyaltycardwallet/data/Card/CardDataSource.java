@@ -3,10 +3,21 @@ package com.example.loyaltycardwallet.data.Card;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.example.loyaltycardwallet.data.Card.CardDataSource.getClosest;
 import com.example.loyaltycardwallet.data.Database.Database;
 import com.example.loyaltycardwallet.ui.DbInterfaces.CardDbActivity;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -79,6 +90,48 @@ public class CardDataSource {
                         .getCardDao()
                         .insert(card);
 
+                DatabaseReference store = FirebaseDatabase.getInstance()
+                        .getReference()
+                        .child("magazine")
+                        .child(card.name);
+
+
+                store.runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                        Integer count = mutableData.getValue(Integer.class);
+                        if (count == null) {
+                            mutableData.setValue(1);
+                        } else {
+                            mutableData.setValue(count + 1);
+                        }
+
+                        return Transaction.success(mutableData);
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                    }
+                });
+
+
+//                store.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        Integer currentValue = dataSnapshot.getValue(Integer.class);
+//
+//                        if (currentValue == null || currentValue == 0) store.setValue(1);
+//                        else store.setValue(currentValue + 1);
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//                        Log.e("FirebaseError", databaseError.getMessage());
+//                    }
+//                });
+
                 return true;
             }
             return false;
@@ -148,6 +201,49 @@ public class CardDataSource {
                 Database.getInstance(context)
                         .getCardDao()
                         .delete(card);
+
+                DatabaseReference store = FirebaseDatabase.getInstance()
+                        .getReference()
+                        .child("magazine")
+                        .child(card.name);
+
+                store.runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                        Integer count = mutableData.getValue(Integer.class);
+                        if (count == null || count == 0) {
+                            return Transaction.success(mutableData);
+                        } else {
+                            mutableData.setValue(count - 1);
+                        }
+
+                        return Transaction.success(mutableData);
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                    }
+                });
+
+
+//                store.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        Integer currentValue = dataSnapshot.getValue(Integer.class);
+//
+//                        if (currentValue != null || currentValue > 0) {
+//                            // sanity check
+//                            store.setValue(currentValue - 1);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
 
                 return true;
             }

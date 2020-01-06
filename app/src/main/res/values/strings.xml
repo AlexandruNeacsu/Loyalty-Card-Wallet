@@ -49,11 +49,12 @@
 
     <string name="delete_card_provider">Sterge</string>
 
-    <string name="distance_report_title">Lista celor mai apropiate magazine la care deti card.</string>
+    <string name="distance_report_title">Lista celor mai apropiate magazine la care detii card.</string>
+    <string name="numbers_report_title">Numar carduri pentru fiecare magazin.</string>
 
 
-    <string name="report_distance">Distanta</string>
-    <string name="report_xxx">XXX</string>
+    <string name="menu_report_distance">Magazine apropiate</string>
+    <string name="menu_report_numbers">Total carduri global</string>
 
     <string name="save">Salveaza</string>
     <string name="report_save_succes">Raport salvat cu succes</string>

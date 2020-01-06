@@ -2,15 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/distance_report"
+    android:id="@+id/numbers_report"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context=".ui.Reports.DistanceReportActivity">
+    tools:context=".ui.Reports.NumbersReportActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/report_distance_toolbar"
+        android:id="@+id/report_numbers_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
@@ -24,7 +24,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="40dp"
         android:layout_marginTop="44dp"
-        android:text="@string/distance_report_title" />
-
+        android:text="@string/numbers_report_title" />
 
 </LinearLayout>

@@ -126,8 +126,6 @@ public class DistanceReportActivity extends AppCompatActivity implements CardDbA
         this.report = builder.toString();
 
         builder.setLength(0);
-
-        Toast.makeText(this, R.string.report_save_succes, Toast.LENGTH_SHORT);
     }
 
     @Override
@@ -147,6 +145,8 @@ public class DistanceReportActivity extends AppCompatActivity implements CardDbA
 
                 outputStreamWriter.write(this.report);
                 outputStreamWriter.close();
+
+                Toast.makeText(this, R.string.report_save_succes, Toast.LENGTH_SHORT).show();
             }
             catch (IOException e) {
                 Log.e("Exception", "File write failed: " + e.toString());
