@@ -56,6 +56,7 @@ public class CardProvider implements Parcelable {
 
 
     public CardProvider(Card card) {
+        this.id = card.cardProviderId;
         this.name = card.name;
         this.barcode = card.barcode;
         this.barcodeBitmap = card.barcodeBitmap;
@@ -69,6 +70,7 @@ public class CardProvider implements Parcelable {
     }
 
     private CardProvider(Parcel in) {
+        id = in.readInt();
         name = in.readString();
         logoUrlString = in.readString();
         barcode = in.readString();
@@ -95,6 +97,7 @@ public class CardProvider implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
         dest.writeString(name);
         dest.writeString(logoUrlString);
         dest.writeString(barcode);

@@ -10,9 +10,8 @@ import com.example.loyaltycardwallet.data.Card.Card;
 import com.example.loyaltycardwallet.data.Card.CardDao;
 import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
 import com.example.loyaltycardwallet.data.CardProvider.CardProviderDao;
-import com.example.loyaltycardwallet.data.CardProvidersWithCards.CardProvidersWithCardsDao;
 
-@androidx.room.Database(entities = {CardProvider.class, Card.class}, version = 7)
+@androidx.room.Database(entities = {CardProvider.class, Card.class}, version = 8)
 @TypeConverters({Converters.class})
 public abstract class Database extends RoomDatabase {
     private static Database instance;
@@ -30,6 +29,4 @@ public abstract class Database extends RoomDatabase {
     public abstract CardProviderDao getCardProviderDao();
 
     public abstract CardDao getCardDao();
-
-    public abstract CardProvidersWithCardsDao getCardProvidersWithCardsDao();
 }

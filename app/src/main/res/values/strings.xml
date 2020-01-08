@@ -1,12 +1,10 @@
 <resources>
     <string name="app_name">Loyalty Card Wallet</string>
-    <string name="welcome">"Buna !"</string>
 
     <string name="search_hint">Numele magazinului</string>
 
     <string name="add">Adauga</string>
     <string name="add_scan">Aseaza cardul sub camera pentru a scana</string>
-    <string name="add_or">SAU</string>
     <string name="add_manual">Introdu cardul manual</string>
 
     <string name="store_name">Magazin: %1$s</string>
@@ -19,13 +17,7 @@
     <string name="image_list_card_logo_contentDescription">Logo magazin</string>
 
 
-    <string name="action_register">Inregistreazate</string>
-    <string name="action_language">Limba</string>
-
     <string name="error_empty_barcode">Codul nu poate fi gol</string>
-    <string name="error_empty_email">Emailul nu poate fi gol</string>
-    <string name="error_empty_password">Parola nu poate fi goala</string>
-    <string name="error_invalid_password">Parola trebuie sa aiba >5 caractere</string>
 
     <!-- ADD MENU -->
     <string name="add_menu_search">Cauta</string>
@@ -51,6 +43,10 @@
     <string name="save">Salveaza</string>
     <string name="report_save_succes">Raport salvat cu succes</string>
     <string name="Other">Altele</string>
+
+    <string name="delete_provider">Esti sigur? Se vor sterge toate cardurile de la acest magazin!</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Anuleaza</string>
 
 </resources>
 

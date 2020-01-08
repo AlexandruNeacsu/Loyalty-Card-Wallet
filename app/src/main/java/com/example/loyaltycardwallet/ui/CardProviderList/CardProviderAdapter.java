@@ -1,5 +1,6 @@
 package com.example.loyaltycardwallet.ui.CardProviderList;
 
+import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,11 +72,24 @@ public class CardProviderAdapter extends RecyclerView.Adapter<CardProviderAdapte
 
             Button button = view.findViewById(R.id.delete_provider_button);
             button.setOnClickListener(v -> {
-                new CardProviderDataSource.delete(view.getContext(), mItem).execute();
+                AlertDialog.Builder builder = new AlertDialog.Builder(mView.getContext());
 
-                mValues.remove(mItem);
+                builder.setMessage(R.string.delete_provider);
 
-                self.notifyDataSetChanged();
+                builder.setPositiveButton(R.string.ok, (dialog, id) -> {
+                    new CardProviderDataSource.delete(view.getContext(), mItem).execute();
+
+                    mValues.remove(mItem);
+
+                    self.notifyDataSetChanged();
+                });
+                builder.setNegativeButton(R.string.cancel, (dialog, id) -> {
+                    // User cancelled the dialog
+                });
+
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
             });
         }
 

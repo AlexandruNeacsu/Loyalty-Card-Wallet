@@ -3,12 +3,23 @@ package com.example.loyaltycardwallet.data.Card;
 import android.graphics.Bitmap;
 
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
 import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
 
+import static androidx.room.ForeignKey.CASCADE;
 
-@Entity(tableName = "Cards")
+
+@Entity(
+        tableName = "Cards",
+        foreignKeys = @ForeignKey(
+                entity = CardProvider.class,
+                parentColumns = "id",
+                childColumns = "cardProviderId",
+                onDelete = CASCADE
+        )
+)
 public class Card {
     private static final String logoProviderURL = "https://logo.clearbit.com/";
 
@@ -49,7 +60,7 @@ public class Card {
         this.isOpen = provider.isOpen;
         this.address = provider.address;
         this.placeId = provider.placeId;
+        this.cardProviderId = provider.id;
         this.logoUrlString = logoProviderURL.concat(name).concat(".ro");
-
     }
 }

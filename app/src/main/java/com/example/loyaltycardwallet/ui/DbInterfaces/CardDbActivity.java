@@ -1,8 +1,6 @@
 package com.example.loyaltycardwallet.ui.DbInterfaces;
 
 import com.example.loyaltycardwallet.data.Card.Card;
-import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
-import com.example.loyaltycardwallet.data.CardProvidersWithCards.CardProvidersWithCards;
 
 import java.util.List;
 

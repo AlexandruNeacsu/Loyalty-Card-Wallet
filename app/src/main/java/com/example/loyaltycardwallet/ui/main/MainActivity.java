@@ -51,12 +51,12 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
     @Override
     public void getItemsResponse(List<Card> cards) {
         new Handler().postDelayed(() -> {
-            stackAdapter.updateData(cards);
+                    stackAdapter.updateData(cards);
 
-            // update the cards data(location, etc...)
-            new LocationAndLogoUpdater(this).execute(cards.toArray(new Card[0]));
-        },
-        200
+                    // update the cards data(location, etc...)
+                    new LocationAndLogoUpdater(this).execute(cards.toArray(new Card[0]));
+                },
+                200
         );
 
     }
@@ -169,17 +169,16 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.println(Log.DEBUG, "ScanDEBUG", Integer.toString(requestCode));
-
-
         switch (requestCode) {
             case ADD_CARD: {
                 if (resultCode == RESULT_OK && data != null) {
                     CardProvider provider = data.getExtras().getParcelable("cardProviderInitialized");
 
-                    Card card = new Card(provider);
+                    if (provider != null) {
+                        Card card = new Card(provider);
 
-                    new CardDataSource.insert<>(this, getApplicationContext(), card).execute();
+                        new CardDataSource.insert<>(this, getApplicationContext(), card).execute();
+                    }
 
                     break;
                 }
@@ -188,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
                 if (resultCode == RESULT_OK && data != null) {
                     CardProvider provider = data.getExtras().getParcelable("cardProviderInitialized");
 
-                    if (selectedCard != null && !selectedCard.barcode.equals(provider.barcode)) {
+                    if (selectedCard != null && provider != null && !selectedCard.barcode.equals(provider.barcode)) {
                         selectedCard.barcode = provider.barcode;
 
 
