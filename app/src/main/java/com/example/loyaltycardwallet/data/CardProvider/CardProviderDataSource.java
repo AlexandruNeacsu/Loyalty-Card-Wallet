@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.example.loyaltycardwallet.data.Database.Database;
-import com.example.loyaltycardwallet.ui.DbInterfaces.CardProviderDbActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

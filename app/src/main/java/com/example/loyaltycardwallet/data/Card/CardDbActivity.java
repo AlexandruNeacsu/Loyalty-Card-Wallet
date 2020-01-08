@@ -1,4 +1,4 @@
-package com.example.loyaltycardwallet.ui.DbInterfaces;
+package com.example.loyaltycardwallet.data.Card;
 
 import com.example.loyaltycardwallet.data.Card.Card;
 

@@ -1,4 +1,4 @@
-package com.example.loyaltycardwallet.ui.DbInterfaces;
+package com.example.loyaltycardwallet.data.CardProvider;
 
 import androidx.appcompat.app.AppCompatActivity;
 

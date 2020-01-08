@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.loyaltycardwallet.R;
 import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
 import com.example.loyaltycardwallet.data.CardProvider.CardProviderDataSource;
-import com.example.loyaltycardwallet.ui.DbInterfaces.CardProviderDbActivity;
+import com.example.loyaltycardwallet.data.CardProvider.CardProviderDbActivity;
 
 import java.util.List;
 

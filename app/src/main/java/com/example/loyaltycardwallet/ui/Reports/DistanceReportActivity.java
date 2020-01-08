@@ -9,12 +9,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +22,7 @@ import androidx.core.app.ActivityCompat;
 import com.example.loyaltycardwallet.R;
 import com.example.loyaltycardwallet.data.Card.Card;
 import com.example.loyaltycardwallet.data.Card.CardDataSource;
-import com.example.loyaltycardwallet.ui.DbInterfaces.CardDbActivity;
+import com.example.loyaltycardwallet.data.Card.CardDbActivity;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;

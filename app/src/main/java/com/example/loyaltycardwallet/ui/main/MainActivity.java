@@ -22,7 +22,7 @@ import com.example.loyaltycardwallet.data.Card.CardDao;
 import com.example.loyaltycardwallet.data.Card.CardDataSource;
 import com.example.loyaltycardwallet.data.CardProvider.CardProvider;
 import com.example.loyaltycardwallet.data.Database.Database;
-import com.example.loyaltycardwallet.ui.DbInterfaces.CardDbActivity;
+import com.example.loyaltycardwallet.data.Card.CardDbActivity;
 import com.example.loyaltycardwallet.ui.Reports.DistanceReportActivity;
 import com.example.loyaltycardwallet.ui.Reports.NumbersReportActivity;
 import com.example.loyaltycardwallet.ui.add.AddActivityCardProvider;

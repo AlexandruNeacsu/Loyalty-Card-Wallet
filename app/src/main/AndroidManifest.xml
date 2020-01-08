@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".ui.Reports.NumbersReportActivity"></activity>
         <activity android:name=".ui.Reports.DistanceReportActivity" />
-        <activity android:name=".ui.DbInterfaces.CardProviderDbActivity" />
+        <activity android:name=".data.CardProvider.CardProviderDbActivity" />
         <activity android:name=".ui.add.AddProviderActivity" />
         <activity android:name=".ui.add.AddActivityCardProvider" />
         <activity android:name=".ui.add.ScanActivity" />

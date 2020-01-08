@@ -3,21 +3,17 @@ package com.example.loyaltycardwallet.data.Card;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.loyaltycardwallet.data.Card.CardDataSource.getClosest;
 import com.example.loyaltycardwallet.data.Database.Database;
-import com.example.loyaltycardwallet.ui.DbInterfaces.CardDbActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
