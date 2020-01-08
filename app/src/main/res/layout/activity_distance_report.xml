@@ -1,30 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/distance_report"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".ui.Reports.DistanceReportActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/report_distance_toolbar"
+    <LinearLayout
+        android:id="@+id/distance_report"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark" />
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        tools:context=".ui.Reports.DistanceReportActivity">
 
-    <TextView
-        android:id="@+id/report_distance_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="40dp"
-        android:layout_marginTop="44dp"
-        android:text="@string/distance_report_title" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/report_distance_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark" />
+
+        <TextView
+            android:id="@+id/report_distance_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="40dp"
+            android:layout_marginTop="44dp"
+            android:text="@string/distance_report_title" />
 
 
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>
