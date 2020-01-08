@@ -19,7 +19,6 @@ public class CardProviderDataSource {
 
     private static List<String> DEFAULT_ITEMS = Arrays.asList(
             "Kaufland",
-            "Lidl",
             "Ikea",
             "Profi"
     );
@@ -76,7 +75,7 @@ public class CardProviderDataSource {
             items.addAll(providers);
             originalItems.addAll(providers);
 
-            activity.getItemsResponse(providers);
+            activity.getItemsResponse(items);
         }
     }
 

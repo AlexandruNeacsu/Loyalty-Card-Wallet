@@ -17,11 +17,6 @@ import com.example.loyaltycardwallet.ui.CardProviderList.CardProviderFragment.On
 
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link CardProvider} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class CardProviderAdapter extends RecyclerView.Adapter<CardProviderAdapter.ViewHolder> {
 
     private final List<CardProvider> mValues;

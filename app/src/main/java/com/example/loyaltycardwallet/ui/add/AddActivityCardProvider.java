@@ -182,7 +182,7 @@ public class AddActivityCardProvider extends AppCompatActivity implements CardPr
     private static class LocationAndLogoProvider extends AsyncTask<CardProvider, Integer, String> {
         private WeakReference<AddActivityCardProvider> activityWeakReference;
         private String placesUrl = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=KEY-PLACEHOLDER&" +
-                "language=ro&inputtype=textquery&fields=formatted_address,name,place_id,opening_hours&input="; // TODO remove API KEY
+                "language=ro&inputtype=textquery&fields=formatted_address,name,place_id,opening_hours&input=";
 
         LocationAndLogoProvider(AddActivityCardProvider activity) {
             this.activityWeakReference = new WeakReference<>(activity);
@@ -294,6 +294,9 @@ public class AddActivityCardProvider extends AppCompatActivity implements CardPr
                         .commit();
 
                 fragment.mAdapter.notifyDataSetChanged();
+
+                // in case the adapter didn't load onCreate
+                if (activity.fragmentAdapter == null) activity.fragmentAdapter = fragment.mAdapter;
             }
 
             ProgressBar progressBar = activity.findViewById(R.id.progressBar_add);

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,13 +19,6 @@ import com.example.loyaltycardwallet.ui.DbInterfaces.CardProviderDbActivity;
 
 import java.util.List;
 
-/**
- * TODO
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
- */
 public class CardProviderFragment extends Fragment implements CardProviderDbActivity {
 
     public CardProviderAdapter mAdapter;
@@ -33,10 +27,6 @@ public class CardProviderFragment extends Fragment implements CardProviderDbActi
 
     RecyclerView recyclerView;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public CardProviderFragment() {
     }
 
@@ -48,8 +38,10 @@ public class CardProviderFragment extends Fragment implements CardProviderDbActi
 
     @Override
     public void getItemsResponse(List<CardProvider> providers) {
-        mAdapter = new CardProviderAdapter(providers, mListener);
-        recyclerView.setAdapter(mAdapter);
+        if (mAdapter == null) {
+            mAdapter = new CardProviderAdapter(providers, mListener);
+            recyclerView.setAdapter(mAdapter);
+        }
     }
 
     @Override
@@ -81,7 +73,7 @@ public class CardProviderFragment extends Fragment implements CardProviderDbActi
 
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;
@@ -98,14 +90,7 @@ public class CardProviderFragment extends Fragment implements CardProviderDbActi
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Permite comunicarea cu activitatea
      */
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(CardProvider item);
