@@ -1,29 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/numbers_report"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
     tools:context=".ui.Reports.NumbersReportActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/report_numbers_toolbar"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/numbers_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark" />
+        tools:context=".ui.Reports.NumbersReportActivity">
 
-    <TextView
-        android:id="@+id/report_distance_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="40dp"
-        android:layout_marginTop="44dp"
-        android:text="@string/numbers_report_title" />
+        <LinearLayout
+            android:id="@+id/numbers_report"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-</LinearLayout>
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/report_numbers_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                android:elevation="4dp"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark" />
+
+            <TextView
+                android:id="@+id/report_distance_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="40dp"
+                android:layout_marginTop="44dp"
+                android:text="@string/numbers_report_title" />
+        </LinearLayout>
+
+        <com.example.loyaltycardwallet.ui.Reports.PieChartView
+            android:id="@+id/PieChartView"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_margin="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/numbers_report" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
