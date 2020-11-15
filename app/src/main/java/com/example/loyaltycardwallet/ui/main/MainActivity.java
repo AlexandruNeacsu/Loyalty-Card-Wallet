@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements CardStackView.Ite
 
         if (sharedPreferences.getString("places", null) == null) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("places", "AIzaSyCgMhZFEdwuzEJ030exD9vf9HPl5A0WqdE");
+            editor.putString("places", "YOURAPIKEY");
 
             editor.apply();
         }
